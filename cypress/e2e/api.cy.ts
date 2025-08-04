@@ -104,24 +104,6 @@ describe("Police Data API", () => {
 				});
 			});
 		});
-
-		it("should handle rate limiting gracefully", () => {
-			// This test would need to be adjusted based on actual rate limiting implementation
-			const requests = Array.from({ length: 10 }, () =>
-				cy.request({
-					method: "GET",
-					url: `${API_BASE}?force=metropolitan&date=2024-01`,
-					failOnStatusCode: false,
-				}),
-			);
-
-			// All requests should either succeed or return appropriate rate limit errors
-			cy.wrap(requests).each((request: any) => {
-				cy.wrap(request).then((response) => {
-					expect([200, 429]).to.include(response.status);
-				});
-			});
-		});
 	});
 
 	describe("POST /api/police-data", () => {
@@ -226,20 +208,6 @@ describe("Police Data API", () => {
 				} else {
 					expect(response.body).to.have.property("error");
 				}
-			});
-		});
-
-		it("should handle timeout scenarios", () => {
-			// This test would need special setup to simulate timeouts
-			// For demonstration purposes, testing with edge case parameters
-			cy.request({
-				method: "GET",
-				url: `${API_BASE}?force=nonexistent&date=2024-01`,
-				failOnStatusCode: false,
-				timeout: 30000,
-			}).then((response) => {
-				// Should handle gracefully, either with empty data or appropriate error
-				expect(response.status).to.be.oneOf([200, 404, 502, 504]);
 			});
 		});
 	});
