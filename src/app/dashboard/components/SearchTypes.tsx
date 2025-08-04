@@ -1,6 +1,6 @@
 import React from "react";
 import { useTheme } from "@mui/material/styles";
-import { Typography } from "@mui/material";
+import { Grid, Stack, Typography, Avatar, Chip } from "@mui/material";
 import dynamic from "next/dynamic";
 import DashboardCard from "./DashboardCard";
 const Chart = dynamic(() => import("react-apexcharts"), { ssr: false });
@@ -17,8 +17,69 @@ interface SearchTypesProps {
 
 const SearchTypes = ({ data }: SearchTypesProps) => {
 	const theme = useTheme();
-	const primary = theme.palette.primary.main;
-	const secondary = theme.palette.secondary.main;
+	const colors = [
+		theme.palette.primary.main,
+		theme.palette.secondary.main,
+		theme.palette.success.main,
+		theme.palette.warning.main,
+		theme.palette.error.main,
+		theme.palette.info.main
+	];
+
+	// Chart options
+	const optionscolumnchart: any = {
+		chart: {
+			type: "donut",
+			foreColor: "#adb0bb",
+			toolbar: {
+				show: false,
+			},
+			height: 155,
+		},
+		colors,
+		plotOptions: {
+			pie: {
+				startAngle: 0,
+				endAngle: 360,
+				donut: {
+					size: "75%",
+					background: "transparent",
+				},
+			},
+		},
+		tooltip: {
+			theme: theme.palette.mode === "dark" ? "dark" : "light",
+			fillSeriesColor: false,
+			y: {
+				formatter: function(val: number, opts: any) {
+					const percentage = data[opts.seriesIndex]?.percentage || 0;
+					return `${val.toLocaleString()} (${percentage}%)`;
+				}
+			}
+		},
+		stroke: {
+			show: false,
+		},
+		dataLabels: {
+			enabled: false,
+		},
+		legend: {
+			show: false,
+		},
+		responsive: [
+			{
+				breakpoint: 991,
+				options: {
+					chart: {
+						width: 120,
+					},
+				},
+			},
+		],
+	};
+
+	// Prepare series data for chart
+	const seriescolumnchart = data.map(item => item.value);
 
 	// Show empty state if no data
 	if (!data || data.length === 0) {
@@ -31,85 +92,58 @@ const SearchTypes = ({ data }: SearchTypesProps) => {
 		);
 	}
 
-	// Chart configuration
-	const optionscolumnchart: any = {
-		chart: {
-			type: "bar",
-			foreColor: "#adb0bb",
-			toolbar: {
-				show: true,
-			},
-			height: 330,
-		},
-		colors: [primary, secondary],
-		plotOptions: {
-			bar: {
-				horizontal: true,
-				barHeight: "60%",
-				columnWidth: "50%",
-				borderRadius: [1],
-				borderRadiusApplication: "end",
-				borderRadiusWhenStacked: "all",
-			},
-		},
-		stroke: {
-			show: true,
-			width: 5,
-			lineCap: "butt",
-			colors: ["transparent"],
-		},
-		dataLabels: {
-			enabled: false,
-		},
-		legend: {
-			show: false,
-		},
-		grid: {
-			borderColor: "rgba(0,0,0,0.1)",
-			strokeDashArray: 3,
-			xaxis: {
-				lines: {
-					show: false,
-				},
-			},
-		},
-		yaxis: {
-			tickAmount: 4,
-		},
-		xaxis: {
-			categories: data.map(item => item.name),
-			axisBorder: {
-				show: true,
-			},
-		},
-		tooltip: {
-			theme: theme.palette.mode === "dark" ? "dark" : "light",
-			fillSeriesColor: false,
-			y: {
-				formatter: function(val: number, opts: any) {
-					const percentage = data[opts.dataPointIndex]?.percentage || 0;
-					return `${val.toLocaleString()} (${percentage}%)`;
-				}
-			}
-		},
-	};
-
-	const seriescolumnchart: any = [
-		{
-			name: "Count",
-			data: data.map(item => item.value)
-		},
-	];
-
 	return (
 		<DashboardCard title="Search Types">
-			<Chart
-				options={optionscolumnchart}
-				series={seriescolumnchart}
-				type="bar"
-				height={380}
-				width={"100%"}
-			/>
+			<Grid container spacing={3}>
+				<Grid size={{ xs: 12 }}>
+					<Chart
+						options={optionscolumnchart}
+						series={seriescolumnchart}
+						type="donut"
+						height={150}
+						width={"100%"}
+					/>
+				</Grid>
+				<Grid size={{ xs: 12 }}>
+					<Stack spacing={1} mt={5} direction="column">
+						{data.slice(0, 6).map((item, index) => (
+							<Stack key={item.name} direction="row" spacing={1} alignItems="center">
+								<Avatar
+									sx={{
+										width: 9,
+										height: 9,
+										bgcolor: colors[index % colors.length],
+										svg: { display: "none" },
+									}}
+								></Avatar>
+								<Typography
+									variant="subtitle2"
+									color="textSecondary"
+									sx={{
+										minWidth: 100,
+										fontSize: "0.75rem",
+										overflow: "hidden",
+										textOverflow: "ellipsis",
+										whiteSpace: "nowrap"
+									}}
+									title={item.name}
+								>
+									{item.name}
+								</Typography>
+								<Chip
+									sx={{
+										backgroundColor: colors[index % colors.length],
+										color: "#fff",
+										fontSize: "0.75rem"
+									}}
+									size="small"
+									label={`${item.value.toLocaleString()} (${item.percentage}%)`}
+								/>
+							</Stack>
+						))}
+					</Stack>
+				</Grid>
+			</Grid>
 		</DashboardCard>
 	);
 };

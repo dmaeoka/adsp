@@ -213,7 +213,7 @@ export class PoliceDataService {
 			};
 		}
 
-		const sortedData = [...data].sort(
+		const sortedData = Array.from(data).sort(
 			(a, b) => a.date.getTime() - b.date.getTime(),
 		);
 
@@ -384,22 +384,22 @@ export class PoliceDataService {
 	 */
 	static getFilterOptions(data: ProcessedStopSearchRecord[]): FilterOptions {
 		return {
-			searchTypes: [...new Set(data.map((r) => r.type))]
+			searchTypes: Array.from(new Set(data.map((r) => r.type)))
 				.filter(Boolean)
 				.sort(),
-			ageRanges: [...new Set(data.map((r) => r.age_range))]
+			ageRanges: Array.from(new Set(data.map((r) => r.age_range)))
 				.filter(Boolean)
 				.sort(),
-			genders: [...new Set(data.map((r) => r.gender))]
+			genders: Array.from(new Set(data.map((r) => r.gender)))
 				.filter(Boolean)
 				.sort(),
-			ethnicities: [...new Set(data.map((r) => r.self_defined_ethnicity))]
+			ethnicities: Array.from(new Set(data.map((r) => r.self_defined_ethnicity)))
 				.filter(Boolean)
 				.sort(),
-			outcomes: [...new Set(data.map((r) => r.outcome))]
+			outcomes: Array.from(new Set(data.map((r) => r.outcome)))
 				.filter(Boolean)
 				.sort(),
-			objectsOfSearch: [...new Set(data.map((r) => r.object_of_search))]
+			objectsOfSearch: Array.from(new Set(data.map((r) => r.object_of_search)))
 				.filter(Boolean)
 				.sort(),
 		};

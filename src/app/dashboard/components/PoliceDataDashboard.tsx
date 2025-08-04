@@ -371,49 +371,41 @@ export default function PoliceDataDashboard({ initialParams }: PoliceDataDashboa
 					<StatsCard
 						title="Total Stop & Searches"
 						value={stats.total.toLocaleString()}
-						trend="info"
-						trendValue="100%"
 					/>
 				</Grid>
 				<Grid size={{ xs: 6, lg: 3 }}>
 					<StatsCard
 						title="Search Types"
 						value={stats.searchTypes.length.toString()}
-						trend="success"
-						trendValue={`${stats.searchTypes.length} types`}
 					/>
 				</Grid>
 				<Grid size={{ xs: 6, lg: 3 }}>
 					<StatsCard
 						title="Unique Outcomes"
 						value={stats.outcomes.length.toString()}
-						trend="warning"
-						trendValue={`${stats.outcomes.length} outcomes`}
 					/>
 				</Grid>
 				<Grid size={{ xs: 6, lg: 3 }}>
 					<StatsCard
 						title="Data Period"
 						value={getFormattedMonth()}
-						trend="info"
-						trendValue={getCurrentForceName()}
 					/>
 				</Grid>
 
 				{/* Charts */}
-				<Grid size={{ xs: 12, lg: 6 }}>
+				<Grid size={{ xs: 12, lg: 4 }}>
 					<GenderDistribution data={stats.demographics.gender} />
 				</Grid>
 
-				<Grid size={{ xs: 12, lg: 6 }}>
+				<Grid size={{ xs: 12, lg: 4 }}>
 					<AgeDistribution data={stats.demographics.ageRange} />
 				</Grid>
 
-				<Grid size={{ xs: 12, lg: 6 }}>
+				<Grid size={{ xs: 12, lg: 4 }}>
 					<SearchTypes data={stats.searchTypes} />
 				</Grid>
 
-				<Grid size={{ xs: 12, lg: 6 }}>
+				<Grid size={{ xs: 12 }}>
 					<SearchOutcomes data={stats.outcomes} />
 				</Grid>
 

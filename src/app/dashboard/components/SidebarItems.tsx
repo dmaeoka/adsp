@@ -1,5 +1,5 @@
 // src/app/dashboard/components/SidebarItems.tsx
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useCallback } from "react";
 import {
 	Box,
 	Select,
@@ -78,17 +78,6 @@ const SidebarItems = () => {
 		fetchForces();
 	}, []);
 
-	// Auto-set default month if none selected
-	useEffect(() => {
-		if (!selectedMonth && !isLoadingForces) {
-			const now = new Date();
-			now.setMonth(now.getMonth() - 3);
-			const defaultMonth = now.toISOString().slice(0, 7);
-			setSelectedMonth(defaultMonth);
-			handleMonthChange(defaultMonth);
-		}
-	}, [isLoadingForces, selectedMonth]);
-
 	const generateMonthOptions = () => {
 		const options = [];
 		const now = new Date();
@@ -108,7 +97,7 @@ const SidebarItems = () => {
 	const monthOptions = generateMonthOptions();
 
 	// Update URL with new parameters
-	const updateURL = (force: string, month: string) => {
+	const updateURL = useCallback((force: string, month: string) => {
 		const newPath = `/dashboard/${force}`;
 		const queryParams = new URLSearchParams();
 
@@ -131,7 +120,7 @@ const SidebarItems = () => {
 		const fullPath = queryString ? `${newPath}?${queryString}` : newPath;
 
 		router.push(fullPath, { scroll: false });
-	};
+	}, [router, searchParams]);
 
 	const handleForceChange = (event: any) => {
 		const newForce = event.target.value;
@@ -139,11 +128,22 @@ const SidebarItems = () => {
 		updateURL(newForce, selectedMonth);
 	};
 
-	const handleMonthChange = (event: any) => {
+	const handleMonthChange = useCallback((event: any) => {
 		const newMonth = typeof event === 'string' ? event : event.target.value;
 		setSelectedMonth(newMonth);
 		updateURL(selectedForce, newMonth);
-	};
+	}, [selectedForce, updateURL]);
+
+	// Auto-set default month if none selected
+	useEffect(() => {
+		if (!selectedMonth && !isLoadingForces) {
+			const now = new Date();
+			now.setMonth(now.getMonth() - 3);
+			const defaultMonth = now.toISOString().slice(0, 7);
+			setSelectedMonth(defaultMonth);
+			handleMonthChange(defaultMonth);
+		}
+	}, [isLoadingForces, selectedMonth, handleMonthChange]);
 
 	return (
 		<MUI_Sidebar

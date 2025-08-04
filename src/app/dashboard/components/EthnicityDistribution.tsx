@@ -100,16 +100,12 @@ const EthnicityDistribution = ({ data }: EthnicityDistributionProps) => {
 		);
 	}
 
-	// Limit displayed items to prevent overcrowding
-	const displayData = data.slice(0, 8); // Show top 8 categories
-	const hasMore = data.length > 8;
-
 	return (
 		<DashboardCard title="Ethnicity Distribution">
 			<Grid container spacing={3}>
-				<Grid size={{ xs: 12, sm: 6 }}>
+				<Grid size={{ xs: 12, sm: 8 }}>
 					<Stack spacing={1} mt={2} direction="column" sx={{ maxHeight: 300, overflowY: "auto" }}>
-						{displayData.map((item, index) => (
+						{data.map((item, index) => (
 							<Stack key={item.name} direction="row" spacing={1} alignItems="center">
 								<Avatar
 									sx={{
@@ -128,7 +124,6 @@ const EthnicityDistribution = ({ data }: EthnicityDistributionProps) => {
 										overflow: "hidden",
 										textOverflow: "ellipsis",
 										whiteSpace: "nowrap",
-										maxWidth: 120
 									}}
 									title={item.name}
 								>
@@ -149,19 +144,10 @@ const EthnicityDistribution = ({ data }: EthnicityDistributionProps) => {
 								/>
 							</Stack>
 						))}
-						{hasMore && (
-							<Typography
-								variant="caption"
-								color="text.secondary"
-								sx={{ fontStyle: "italic", mt: 1 }}
-							>
-								+ {data.length - 8} more categories
-							</Typography>
-						)}
 					</Stack>
 				</Grid>
-				<Grid size={{ xs: 12, sm: 6 }}>
-					{displayData.length > 0 && (
+				<Grid size={{ xs: 12, sm: 4 }}>
+					{data.length > 0 && (
 						<Chart
 							options={optionscolumnchart}
 							series={seriescolumnchart.slice(0, 8)} // Only show top 8 in chart

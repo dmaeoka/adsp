@@ -87,7 +87,16 @@ const AgeDistribution = ({ data }: AgeDistributionProps) => {
 	return (
 		<DashboardCard title="Age Distribution">
 			<Grid container spacing={3}>
-				<Grid size={{ xs: 6, sm: 6 }}>
+				<Grid size={{ xs: 12 }}>
+					<Chart
+						options={optionscolumnchart}
+						series={seriescolumnchart}
+						type="donut"
+						height={150}
+						width={"100%"}
+					/>
+				</Grid>
+				<Grid size={{ xs: 12 }}>
 					<Stack spacing={1} mt={5} direction="column">
 						{data.slice(0, 5).map((item, index) => (
 							<Stack key={item.name} direction="row" spacing={1} alignItems="center">
@@ -114,15 +123,6 @@ const AgeDistribution = ({ data }: AgeDistributionProps) => {
 							</Stack>
 						))}
 					</Stack>
-				</Grid>
-				<Grid size={{ xs: 6 }}>
-					<Chart
-						options={optionscolumnchart}
-						series={seriescolumnchart}
-						type="donut"
-						height={150}
-						width={"100%"}
-					/>
 				</Grid>
 			</Grid>
 		</DashboardCard>

@@ -10,35 +10,7 @@ interface StatsCardProps {
 	icon?: React.ReactNode;
 }
 
-const StatsCard = ({ title, value, trend, trendValue, icon }: StatsCardProps) => {
-	const getTrendColor = () => {
-		switch (trend) {
-			case "success":
-				return "success";
-			case "error":
-				return "error";
-			case "warning":
-				return "warning";
-			case "info":
-			default:
-				return "primary";
-		}
-	};
-
-	const getTrendIcon = () => {
-		switch (trend) {
-			case "success":
-				return <IconTrendingUp size={16} />;
-			case "error":
-				return <IconTrendingDown size={16} />;
-			case "warning":
-				return <IconMinus size={16} />;
-			case "info":
-			default:
-				return <IconTrendingUp size={16} />;
-		}
-	};
-
+const StatsCard = ({ title, value }: StatsCardProps) => {
 	return (
 		<Card sx={{ height: "100%" }}>
 			<CardContent>
@@ -46,29 +18,11 @@ const StatsCard = ({ title, value, trend, trendValue, icon }: StatsCardProps) =>
 					<Typography variant="h6" color="text.secondary" sx={{ fontSize: "0.875rem" }}>
 						{title}
 					</Typography>
-					{icon && (
-						<Box sx={{ opacity: 0.7 }}>
-							{icon}
-						</Box>
-					)}
 				</Box>
 
 				<Typography variant="h4" component="div" fontWeight="600" mb={1}>
 					{value}
 				</Typography>
-
-				{trendValue && (
-					<Box display="flex" alignItems="center">
-						<Chip
-							icon={getTrendIcon()}
-							label={trendValue}
-							color={getTrendColor()}
-							size="small"
-							variant="outlined"
-							sx={{ fontSize: "0.75rem" }}
-						/>
-					</Box>
-				)}
 			</CardContent>
 		</Card>
 	);
