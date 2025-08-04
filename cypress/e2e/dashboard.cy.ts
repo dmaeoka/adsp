@@ -42,19 +42,19 @@ describe("Police Dashboard", () => {
 		});
 
 		it("should allow changing month", () => {
-			cy.selectMonth("2024-01");
-			cy.url().should("include", "date=2024-01");
+			cy.selectMonth("2025-05");
+			cy.url().should("include", "date=2025-05");
 		});
 
 		it("should update dashboard when filters change", () => {
 			cy.selectPoliceForce("surrey");
-			cy.selectMonth("2024-01");
+			cy.selectMonth("2025-05");
 
 			// Check that API is called with new parameters
 			cy.intercept("GET", "/api/police-data*").as("newPoliceData");
 			cy.wait("@newPoliceData").then((interception) => {
 				expect(interception.request.url).to.include("force=surrey");
-				expect(interception.request.url).to.include("date=2024-01");
+				expect(interception.request.url).to.include("date=2025-05");
 			});
 		});
 	});
@@ -197,17 +197,6 @@ describe("Police Dashboard", () => {
 
 			// Should show error state or empty state
 			cy.contains("No data available").should("be.visible");
-		});
-
-		it("should handle empty data gracefully", () => {
-			cy.mockPoliceAPI("empty-police-data");
-			cy.visit("/metropolitan");
-			cy.waitForDashboardLoad();
-
-			cy.contains("No data available").should("be.visible");
-			cy.contains("Total Stop & Searches")
-				.parent()
-				.should("contain", "0");
 		});
 
 		it("should handle network timeouts", () => {

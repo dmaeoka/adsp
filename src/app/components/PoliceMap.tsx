@@ -343,50 +343,6 @@ export default function PoliceMap({
 					</Box>
 				) : (
 					<>
-						<Box
-							sx={{
-								position: "absolute",
-								top: 10,
-								left: 10,
-								backgroundColor: "white",
-								p: 2,
-								borderRadius: 1,
-								boxShadow: 2,
-								zIndex: 1000,
-								minWidth: 200,
-							}}
-						>
-							<FormControlLabel
-								control={
-									<Switch
-										checked={showClusters}
-										onChange={(e) =>
-											setShowClusters(e.target.checked)
-										}
-										size="small"
-									/>
-								}
-								label="Enable Clustering"
-							/>
-
-							{showClusters && (
-								<Box sx={{ mt: 1 }}>
-									<Typography variant="caption" gutterBottom>
-										Cluster Radius: {clusterRadius}m
-									</Typography>
-									<Slider
-										value={clusterRadius}
-										onChange={(_, value) =>
-											setClusterRadius(value as number)
-										}
-										min={50}
-										max={500}
-										step={25}
-										size="small"
-									/>
-								</Box>
-							)}
-						</Box>
 						<MapContainer
 							ref={mapRef}
 							center={center}
