@@ -71,7 +71,6 @@ interface PoliceDataDashboardProps {
 
 // Separate component that uses useSearchParams
 function DashboardContent({ initialParams }: PoliceDataDashboardProps) {
-	const router = useRouter();
 	const searchParams = useSearchParams();
 	const pathname = usePathname();
 
@@ -102,10 +101,10 @@ function DashboardContent({ initialParams }: PoliceDataDashboardProps) {
 		},
 	});
 
-	// Parse URL parameters and sync with context
+	// Parse URL parameters and sync with context - UPDATED FOR NEW STRUCTURE
 	const parseURLParams = useCallback(() => {
 		const pathParts = pathname.split("/");
-		const forceFromPath = pathParts[2] || "metropolitan";
+		const forceFromPath = pathParts[1] || "metropolitan";
 		const dateFromParams = searchParams.get("date") || "";
 
 		return {

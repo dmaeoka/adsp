@@ -1,4 +1,4 @@
-// src/app/components/SidebarItems.tsx
+// src/app/dashboard/components/SidebarItems.tsx
 import React, { useEffect, useCallback, Suspense, useRef } from "react";
 import {
 	Box,
@@ -8,7 +8,6 @@ import {
 	MenuItem as MUI_MenuItem,
 	CircularProgress,
 	Typography,
-	Divider
 } from "@mui/material";
 import {
 	Logo,
@@ -36,10 +35,10 @@ function SidebarContent() {
 	// Track if we've already initialized to prevent loops
 	const hasInitialized = useRef(false);
 
-	// Parse current values from URL and update context
+	// Parse current values from URL and update context - UPDATED FOR NEW STRUCTURE
 	useEffect(() => {
 		const pathParts = pathname.split("/");
-		const forceFromPath = pathParts[2] || "metropolitan";
+		const forceFromPath = pathParts[1] || "metropolitan";  // UPDATED: Changed from pathParts[2] to pathParts[1]
 		const monthFromParams = searchParams.get("date") || "";
 
 		// Only update if different to avoid unnecessary re-renders
@@ -69,9 +68,9 @@ function SidebarContent() {
 
 	const monthOptions = generateMonthOptions();
 
-	// Update URL with new parameters
+	// Update URL with new parameters - UPDATED FOR NEW STRUCTURE
 	const updateURL = useCallback((force: string, month: string) => {
-		const newPath = `/${force}`;
+		const newPath = `/${force}`;  // UPDATED: Removed /dashboard prefix
 		const queryParams = new URLSearchParams();
 
 		if (month) queryParams.set("date", month);
@@ -107,7 +106,7 @@ function SidebarContent() {
 		updateURL(selectedForce, newMonth);
 	}, [selectedForce, setSelectedMonth, updateURL]);
 
-	// Auto-set default month if none selected - FIXED VERSION
+	// Auto-set default month if none selected - UPDATED FOR NEW STRUCTURE
 	useEffect(() => {
 		// Only initialize once, when forces are loaded and we haven't initialized yet
 		if (!isLoadingForces && !hasInitialized.current && !selectedMonth && pathname.includes('/')) {
@@ -121,60 +120,57 @@ function SidebarContent() {
 	}, [isLoadingForces, selectedMonth, pathname, selectedForce, setSelectedMonth, updateURL]);
 
 	return (
-		<>
-			{/* Controls Section */}
-			<Box px={3} py={2}>
-				<Typography variant="h6" sx={{ mb: 2, color: 'text.primary' }}>
-					Filters
-				</Typography>
+		<Box px={3} py={2}>
+			<Typography variant="h6" sx={{ mb: 2, color: 'text.primary' }}>
+				Filters
+			</Typography>
 
-				{/* Police Force Selector */}
-				<FormControl fullWidth sx={{ mb: 2 }}>
-					<InputLabel id="force-select-label">Police Force</InputLabel>
-					<Select
-						labelId="force-select-label"
-						id="force-select"
-						value={selectedForce}
-						label="Police Force"
-						onChange={handleForceChange}
-						disabled={isLoadingForces}
-					>
-						{isLoadingForces ? (
-							<MUI_MenuItem disabled>
-								<Box display="flex" alignItems="center" gap={1}>
-									<CircularProgress size={16} />
-									Loading forces...
-								</Box>
+			{/* Police Force Selector */}
+			<FormControl fullWidth sx={{ mb: 2 }}>
+				<InputLabel id="force-select-label">Police Force</InputLabel>
+				<Select
+					labelId="force-select-label"
+					id="force-select"
+					value={selectedForce}
+					label="Police Force"
+					onChange={handleForceChange}
+					disabled={isLoadingForces}
+				>
+					{isLoadingForces ? (
+						<MUI_MenuItem disabled>
+							<Box display="flex" alignItems="center" gap={1}>
+								<CircularProgress size={16} />
+								Loading forces...
+							</Box>
+						</MUI_MenuItem>
+					) : (
+						forces.map((force) => (
+							<MUI_MenuItem key={force.id} value={force.id}>
+								{force.name}
 							</MUI_MenuItem>
-						) : (
-							forces.map((force) => (
-								<MUI_MenuItem key={force.id} value={force.id}>
-									{force.name}
-								</MUI_MenuItem>
-							))
-						)}
-					</Select>
-				</FormControl>
+						))
+					)}
+				</Select>
+			</FormControl>
 
-				{/* Month Selector */}
-				<FormControl fullWidth sx={{ mb: 2 }}>
-					<InputLabel id="month-select-label">Month</InputLabel>
-					<Select
-						labelId="month-select-label"
-						id="month-select"
-						value={selectedMonth}
-						label="Month"
-						onChange={handleMonthChange}
-					>
-						{monthOptions.map((option) => (
-							<MUI_MenuItem key={option.value} value={option.value}>
-								{option.label}
-							</MUI_MenuItem>
-						))}
-					</Select>
-				</FormControl>
-			</Box>
-		</>
+			{/* Month Selector */}
+			<FormControl fullWidth sx={{ mb: 2 }}>
+				<InputLabel id="month-select-label">Month</InputLabel>
+				<Select
+					labelId="month-select-label"
+					id="month-select"
+					value={selectedMonth}
+					label="Month"
+					onChange={handleMonthChange}
+				>
+					{monthOptions.map((option) => (
+						<MUI_MenuItem key={option.value} value={option.value}>
+							{option.label}
+						</MUI_MenuItem>
+					))}
+				</Select>
+			</FormControl>
+		</Box>
 	);
 }
 
