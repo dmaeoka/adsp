@@ -4,13 +4,27 @@ import { Grid, Stack, Typography, Avatar, Chip } from "@mui/material";
 const Chart = dynamic(() => import("react-apexcharts"), { ssr: false });
 import DashboardCard from "./DashboardCard";
 
-const AgeDistribution = () => {
-	const theme = useTheme();
-	const primary = theme.palette.primary.main;
-	const colors = [theme.palette.primary.main, theme.palette.secondary.main, theme.palette.success.main, theme.palette.warning.main, theme.palette.error.main]
-	const primarylight = "#ecf2ff";
+interface ChartDataItem {
+	name: string;
+	value: number;
+	percentage: number;
+}
 
-	// chart
+interface AgeDistributionProps {
+	data: ChartDataItem[];
+}
+
+const AgeDistribution = ({ data }: AgeDistributionProps) => {
+	const theme = useTheme();
+	const colors = [
+		theme.palette.primary.main,
+		theme.palette.secondary.main,
+		theme.palette.success.main,
+		theme.palette.warning.main,
+		theme.palette.error.main
+	];
+
+	// Chart options
 	const optionscolumnchart: any = {
 		chart: {
 			type: "donut",
@@ -55,136 +69,53 @@ const AgeDistribution = () => {
 			},
 		],
 	};
-	const seriescolumnchart: any = [26, 24, 20, 17, 12];
+
+	// Prepare series data for chart
+	const seriescolumnchart = data.map(item => item.value);
+
+	// Show empty state if no data
+	if (!data || data.length === 0) {
+		return (
+			<DashboardCard title="Age Distribution">
+				<Typography variant="body2" color="text.secondary" textAlign="center" py={4}>
+					No age data available
+				</Typography>
+			</DashboardCard>
+		);
+	}
 
 	return (
 		<DashboardCard title="Age Distribution">
 			<Grid container spacing={3}>
-				<Grid
-					size={{
-						xs: 6,
-						sm: 6,
-					}}
-				>
+				<Grid size={{ xs: 6, sm: 6 }}>
 					<Stack spacing={1} mt={5} direction="column">
-						<Stack direction="row" spacing={1} alignItems="center">
-							<Avatar
-								sx={{
-									width: 9,
-									height: 9,
-									bgcolor: colors[0],
-									svg: { display: "none" },
-								}}
-							></Avatar>
-							<Typography
-								variant="subtitle2"
-								color="textSecondary"
-							>
-								over 34
-							</Typography>
-							<Chip
-								sx={{
-									backgroundColor: colors[0],
-									color: "#fff",
-								}}
-								size="small"
-								label={`2,798`} />
-						</Stack>
-						<Stack direction="row" spacing={1} alignItems="center">
-							<Avatar
-								sx={{
-									width: 9,
-									height: 9,
-									bgcolor: colors[1],
-									svg: { display: "none" },
-								}}
-							></Avatar>
-							<Typography
-								variant="subtitle2"
-								color="textSecondary"
-							>
-								18-24
-							</Typography>
-							<Chip
-								sx={{
-									backgroundColor: colors[1],
-								}}
-								size="small"
-								label={`2,590`} />
-						</Stack>
-						<Stack direction="row" spacing={1} alignItems="center">
-							<Avatar
-								sx={{
-									width: 9,
-									height: 9,
-									bgcolor: colors[2],
-									svg: { display: "none" },
-								}}
-							></Avatar>
-							<Typography
-								variant="subtitle2"
-								color="textSecondary"
-							>
-								25-34
-							</Typography>
-							<Chip
-								sx={{
-									backgroundColor: colors[2],
-								}}
-								size="small"
-								label={`2,188`} />
-						</Stack>
-						<Stack direction="row" spacing={1} alignItems="center">
-							<Avatar
-								sx={{
-									width: 9,
-									height: 9,
-									bgcolor: colors[3],
-									svg: { display: "none" },
-								}}
-							></Avatar>
-							<Typography
-								variant="subtitle2"
-								color="textSecondary"
-							>
-								10-17
-							</Typography>
-							<Chip
-								sx={{
-									backgroundColor: colors[3],
-								}}
-								size="small"
-								label={`1,839`} />
-						</Stack>
-						<Stack direction="row" spacing={1} alignItems="center">
-							<Avatar
-								sx={{
-									width: 9,
-									height: 9,
-									bgcolor: colors[4],
-									svg: { display: "none" },
-								}}
-							></Avatar>
-							<Typography
-								variant="subtitle2"
-								color="textSecondary"
-							>
-								Not specified
-							</Typography>
-							<Chip
-								sx={{
-									backgroundColor: colors[4],
-								}}
-								size="small"
-								label={`1,261`} />
-						</Stack>
+						{data.slice(0, 5).map((item, index) => (
+							<Stack key={item.name} direction="row" spacing={1} alignItems="center">
+								<Avatar
+									sx={{
+										width: 9,
+										height: 9,
+										bgcolor: colors[index % colors.length],
+										svg: { display: "none" },
+									}}
+								></Avatar>
+								<Typography variant="subtitle2" color="textSecondary" sx={{ minWidth: 60 }}>
+									{item.name}
+								</Typography>
+								<Chip
+									sx={{
+										backgroundColor: colors[index % colors.length],
+										color: "#fff",
+										fontSize: "0.75rem"
+									}}
+									size="small"
+									label={`${item.value.toLocaleString()} (${item.percentage}%)`}
+								/>
+							</Stack>
+						))}
 					</Stack>
 				</Grid>
-				<Grid
-					size={{
-						xs: 6,
-					}}
-				>
+				<Grid size={{ xs: 6 }}>
 					<Chart
 						options={optionscolumnchart}
 						series={seriescolumnchart}

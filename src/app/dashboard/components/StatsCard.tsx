@@ -1,41 +1,77 @@
-// Stats card component
-import { Card, CardContent, Typography, Stack, Chip } from "@mui/material";
+import React from "react";
+import { Card, CardContent, Typography, Box, Chip } from "@mui/material";
+import { IconTrendingUp, IconTrendingDown, IconMinus } from "@tabler/icons-react";
 
-type trend = 'default' | 'primary' | 'secondary' | 'error' | 'info' | 'success' | 'warning';
-
-export default function StatsCard({
-	title,
-	value,
-	trend,
-	trendValue,
-}: {
+interface StatsCardProps {
 	title: string;
 	value: string;
-	trend?: trend;
+	trend?: "success" | "error" | "warning" | "info";
 	trendValue?: string;
-}) {
+	icon?: React.ReactNode;
+}
+
+const StatsCard = ({ title, value, trend, trendValue, icon }: StatsCardProps) => {
+	const getTrendColor = () => {
+		switch (trend) {
+			case "success":
+				return "success";
+			case "error":
+				return "error";
+			case "warning":
+				return "warning";
+			case "info":
+			default:
+				return "primary";
+		}
+	};
+
+	const getTrendIcon = () => {
+		switch (trend) {
+			case "success":
+				return <IconTrendingUp size={16} />;
+			case "error":
+				return <IconTrendingDown size={16} />;
+			case "warning":
+				return <IconMinus size={16} />;
+			case "info":
+			default:
+				return <IconTrendingUp size={16} />;
+		}
+	};
+
 	return (
-		<Card elevation={9} sx={{ height: '100%', flexGrow: 1 }}>
+		<Card sx={{ height: "100%" }}>
 			<CardContent>
-				<Typography component="h2" variant="subtitle2" gutterBottom>{title}</Typography>
-				<Stack
-					direction="column"
-					sx={{ justifyContent: 'space-between', flexGrow: '1', gap: 1 }}
-				>
-					<Stack sx={{ justifyContent: 'space-between' }}>
-						<Stack
-							direction="row"
-							sx={{ justifyContent: 'space-between', alignItems: 'center' }}
-						>
-							<Typography variant="h4" component="p">{value}</Typography>
-							{ trend && trendValue && (
-								<Chip size="small" color={trend} label={trendValue} />
-							)}
-						</Stack>
-						<Typography variant="caption" sx={{ color: 'text.secondary' }}>Last 30 days</Typography>
-					</Stack>
-				</Stack>
+				<Box display="flex" alignItems="center" justifyContent="space-between" mb={2}>
+					<Typography variant="h6" color="text.secondary" sx={{ fontSize: "0.875rem" }}>
+						{title}
+					</Typography>
+					{icon && (
+						<Box sx={{ opacity: 0.7 }}>
+							{icon}
+						</Box>
+					)}
+				</Box>
+
+				<Typography variant="h4" component="div" fontWeight="600" mb={1}>
+					{value}
+				</Typography>
+
+				{trendValue && (
+					<Box display="flex" alignItems="center">
+						<Chip
+							icon={getTrendIcon()}
+							label={trendValue}
+							color={getTrendColor()}
+							size="small"
+							variant="outlined"
+							sx={{ fontSize: "0.75rem" }}
+						/>
+					</Box>
+				)}
 			</CardContent>
 		</Card>
 	);
-}
+};
+
+export default StatsCard;
