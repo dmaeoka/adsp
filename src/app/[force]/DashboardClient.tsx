@@ -10,11 +10,6 @@ interface DashboardClientProps {
 		};
 		searchParams: {
 			date?: string;
-			page?: string;
-			limit?: string;
-			sort?: string;
-			sortBy?: string;
-			search?: string;
 		};
 	};
 }
@@ -23,13 +18,13 @@ interface DashboardClientProps {
 const DashboardWrapper = dynamic(
 	() => import("../components/DashboardWrapper"),
 	{
-		loading: () => (
-			<div>Loading dashboard...</div>
-		),
+		loading: () => <div>Loading dashboard...</div>,
 		ssr: false,
 	},
 );
 
-export default function DashboardClient({ initialParams }: DashboardClientProps) {
+export default function DashboardClient({
+	initialParams,
+}: DashboardClientProps) {
 	return <DashboardWrapper initialParams={initialParams} />;
 }

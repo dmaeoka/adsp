@@ -31,7 +31,7 @@ const EthnicityDistribution = ({ data }: EthnicityDistributionProps) => {
 		"#DDA0DD",
 		"#98D8C8",
 		"#989898",
-		"#BB8FCE"
+		"#BB8FCE",
 	];
 
 	// Chart options
@@ -59,11 +59,11 @@ const EthnicityDistribution = ({ data }: EthnicityDistributionProps) => {
 			theme: theme.palette.mode === "dark" ? "dark" : "light",
 			fillSeriesColor: false,
 			y: {
-				formatter: function(val: number, opts: any) {
+				formatter: function (val: number, opts: any) {
 					const percentage = data[opts.seriesIndex]?.percentage || 0;
 					return `${val.toLocaleString()} (${percentage}%)`;
-				}
-			}
+				},
+			},
 		},
 		stroke: {
 			show: false,
@@ -87,13 +87,18 @@ const EthnicityDistribution = ({ data }: EthnicityDistributionProps) => {
 	};
 
 	// Prepare series data for chart
-	const seriescolumnchart = data.map(item => item.value);
+	const seriescolumnchart = data.map((item) => item.value);
 
 	// Show empty state if no data
 	if (!data || data.length === 0) {
 		return (
 			<DashboardCard title="Ethnicity Distribution">
-				<Typography variant="body2" color="text.secondary" textAlign="center" py={4}>
+				<Typography
+					variant="body2"
+					color="text.secondary"
+					textAlign="center"
+					py={4}
+				>
 					No ethnicity data available
 				</Typography>
 			</DashboardCard>
@@ -104,9 +109,19 @@ const EthnicityDistribution = ({ data }: EthnicityDistributionProps) => {
 		<DashboardCard title="Ethnicity Distribution">
 			<Grid container spacing={3}>
 				<Grid size={{ xs: 12, sm: 8 }}>
-					<Stack spacing={1} mt={2} direction="column" sx={{ maxHeight: 300, overflowY: "auto" }}>
+					<Stack
+						spacing={1}
+						mt={2}
+						direction="column"
+						sx={{ maxHeight: 300, overflowY: "auto" }}
+					>
 						{data.map((item, index) => (
-							<Stack key={item.name} direction="row" spacing={1} alignItems="center">
+							<Stack
+								key={item.name}
+								direction="row"
+								spacing={1}
+								alignItems="center"
+							>
 								<Avatar
 									sx={{
 										width: 9,
@@ -131,13 +146,14 @@ const EthnicityDistribution = ({ data }: EthnicityDistributionProps) => {
 								</Typography>
 								<Chip
 									sx={{
-										backgroundColor: colors[index % colors.length],
+										backgroundColor:
+											colors[index % colors.length],
 										color: "#fff",
 										fontSize: "0.7rem",
 										height: 20,
 										"& .MuiChip-label": {
-											px: 1
-										}
+											px: 1,
+										},
 									}}
 									size="small"
 									label={`${item.value.toLocaleString()} (${item.percentage}%)`}

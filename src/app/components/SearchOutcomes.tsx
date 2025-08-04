@@ -24,7 +24,12 @@ const SearchOutcomes = ({ data }: SearchOutcomesProps) => {
 	if (!data || data.length === 0) {
 		return (
 			<DashboardCard title="Search Outcomes">
-				<Typography variant="body2" color="text.secondary" textAlign="center" py={4}>
+				<Typography
+					variant="body2"
+					color="text.secondary"
+					textAlign="center"
+					py={4}
+				>
 					No search outcome data available
 				</Typography>
 			</DashboardCard>
@@ -77,7 +82,7 @@ const SearchOutcomes = ({ data }: SearchOutcomesProps) => {
 			tickAmount: 4,
 		},
 		xaxis: {
-			categories: data.map(item => item.name),
+			categories: data.map((item) => item.name),
 			axisBorder: {
 				show: true,
 			},
@@ -86,18 +91,19 @@ const SearchOutcomes = ({ data }: SearchOutcomesProps) => {
 			theme: theme.palette.mode === "dark" ? "dark" : "light",
 			fillSeriesColor: false,
 			y: {
-				formatter: function(val: number, opts: any) {
-					const percentage = data[opts.dataPointIndex]?.percentage || 0;
+				formatter: function (val: number, opts: any) {
+					const percentage =
+						data[opts.dataPointIndex]?.percentage || 0;
 					return `${val.toLocaleString()} (${percentage}%)`;
-				}
-			}
+				},
+			},
 		},
 	};
 
 	const seriescolumnchart: any = [
 		{
 			name: "Count",
-			data: data.map(item => item.value)
+			data: data.map((item) => item.value),
 		},
 	];
 

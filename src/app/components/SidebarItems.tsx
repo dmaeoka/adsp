@@ -9,10 +9,7 @@ import {
 	CircularProgress,
 	Typography,
 } from "@mui/material";
-import {
-	Logo,
-	Sidebar as MUI_Sidebar,
-} from "react-mui-sidebar";
+import { Logo, Sidebar as MUI_Sidebar } from "react-mui-sidebar";
 import Link from "next/link";
 import { usePathname, useRouter, useSearchParams } from "next/navigation";
 import { usePoliceForce } from "../contexts/PoliceForceContext";
@@ -38,7 +35,7 @@ function SidebarContent() {
 	// Parse current values from URL and update context - UPDATED FOR NEW STRUCTURE
 	useEffect(() => {
 		const pathParts = pathname.split("/");
-		const forceFromPath = pathParts[1] || "metropolitan";  // UPDATED: Changed from pathParts[2] to pathParts[1]
+		const forceFromPath = pathParts[1] || "metropolitan"; // UPDATED: Changed from pathParts[2] to pathParts[1]
 		const monthFromParams = searchParams.get("date") || "";
 
 		// Only update if different to avoid unnecessary re-renders
@@ -48,7 +45,14 @@ function SidebarContent() {
 		if (monthFromParams !== selectedMonth) {
 			setSelectedMonth(monthFromParams);
 		}
-	}, [pathname, searchParams, selectedForce, selectedMonth, setSelectedForce, setSelectedMonth]);
+	}, [
+		pathname,
+		searchParams,
+		selectedForce,
+		selectedMonth,
+		setSelectedForce,
+		setSelectedMonth,
+	]);
 
 	const generateMonthOptions = () => {
 		const options = [];
@@ -69,30 +73,22 @@ function SidebarContent() {
 	const monthOptions = generateMonthOptions();
 
 	// Update URL with new parameters - UPDATED FOR NEW STRUCTURE
-	const updateURL = useCallback((force: string, month: string) => {
-		const newPath = `/${force}`;  // UPDATED: Removed /dashboard prefix
-		const queryParams = new URLSearchParams();
+	const updateURL = useCallback(
+		(force: string, month: string) => {
+			const newPath = `/${force}`; // UPDATED: Removed /dashboard prefix
+			const queryParams = new URLSearchParams();
 
-		if (month) queryParams.set("date", month);
+			if (month) queryParams.set("date", month);
 
-		// Preserve other search params
-		const currentPage = searchParams.get("page");
-		const currentLimit = searchParams.get("limit");
-		const currentSort = searchParams.get("sort");
-		const currentSortBy = searchParams.get("sortBy");
-		const currentSearch = searchParams.get("search");
+			const queryString = queryParams.toString();
+			const fullPath = queryString
+				? `${newPath}?${queryString}`
+				: newPath;
 
-		if (currentPage && currentPage !== "1") queryParams.set("page", currentPage);
-		if (currentLimit && currentLimit !== "10") queryParams.set("limit", currentLimit);
-		if (currentSort && currentSort !== "desc") queryParams.set("sort", currentSort);
-		if (currentSortBy && currentSortBy !== "datetime") queryParams.set("sortBy", currentSortBy);
-		if (currentSearch) queryParams.set("search", currentSearch);
-
-		const queryString = queryParams.toString();
-		const fullPath = queryString ? `${newPath}?${queryString}` : newPath;
-
-		router.push(fullPath, { scroll: false });
-	}, [router, searchParams]);
+			router.push(fullPath, { scroll: false });
+		},
+		[router, searchParams],
+	);
 
 	const handleForceChange = (event: any) => {
 		const newForce = event.target.value;
@@ -100,16 +96,25 @@ function SidebarContent() {
 		updateURL(newForce, selectedMonth);
 	};
 
-	const handleMonthChange = useCallback((event: any) => {
-		const newMonth = typeof event === 'string' ? event : event.target.value;
-		setSelectedMonth(newMonth);
-		updateURL(selectedForce, newMonth);
-	}, [selectedForce, setSelectedMonth, updateURL]);
+	const handleMonthChange = useCallback(
+		(event: any) => {
+			const newMonth =
+				typeof event === "string" ? event : event.target.value;
+			setSelectedMonth(newMonth);
+			updateURL(selectedForce, newMonth);
+		},
+		[selectedForce, setSelectedMonth, updateURL],
+	);
 
 	// Auto-set default month if none selected - UPDATED FOR NEW STRUCTURE
 	useEffect(() => {
 		// Only initialize once, when forces are loaded and we haven't initialized yet
-		if (!isLoadingForces && !hasInitialized.current && !selectedMonth && pathname.includes('/')) {
+		if (
+			!isLoadingForces &&
+			!hasInitialized.current &&
+			!selectedMonth &&
+			pathname.includes("/")
+		) {
 			hasInitialized.current = true;
 			const now = new Date();
 			now.setMonth(now.getMonth() - 3);
@@ -117,11 +122,18 @@ function SidebarContent() {
 			setSelectedMonth(defaultMonth);
 			updateURL(selectedForce, defaultMonth);
 		}
-	}, [isLoadingForces, selectedMonth, pathname, selectedForce, setSelectedMonth, updateURL]);
+	}, [
+		isLoadingForces,
+		selectedMonth,
+		pathname,
+		selectedForce,
+		setSelectedMonth,
+		updateURL,
+	]);
 
 	return (
 		<Box px={3} py={2}>
-			<Typography variant="h6" sx={{ mb: 2, color: 'text.primary' }}>
+			<Typography variant="h6" sx={{ mb: 2, color: "text.primary" }}>
 				Filters
 			</Typography>
 
@@ -178,7 +190,7 @@ function SidebarContent() {
 function SidebarFallback() {
 	return (
 		<Box px={3} py={2}>
-			<Typography variant="h6" sx={{ mb: 2, color: 'text.primary' }}>
+			<Typography variant="h6" sx={{ mb: 2, color: "text.primary" }}>
 				Filters
 			</Typography>
 

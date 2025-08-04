@@ -393,13 +393,17 @@ export class PoliceDataService {
 			genders: Array.from(new Set(data.map((r) => r.gender)))
 				.filter(Boolean)
 				.sort(),
-			ethnicities: Array.from(new Set(data.map((r) => r.self_defined_ethnicity)))
+			ethnicities: Array.from(
+				new Set(data.map((r) => r.self_defined_ethnicity)),
+			)
 				.filter(Boolean)
 				.sort(),
 			outcomes: Array.from(new Set(data.map((r) => r.outcome)))
 				.filter(Boolean)
 				.sort(),
-			objectsOfSearch: Array.from(new Set(data.map((r) => r.object_of_search)))
+			objectsOfSearch: Array.from(
+				new Set(data.map((r) => r.object_of_search)),
+			)
 				.filter(Boolean)
 				.sort(),
 		};

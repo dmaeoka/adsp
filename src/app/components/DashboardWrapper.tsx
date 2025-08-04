@@ -10,15 +10,12 @@ interface DashboardWrapperProps {
 		};
 		searchParams: {
 			date?: string;
-			page?: string;
-			limit?: string;
-			sort?: string;
-			sortBy?: string;
-			search?: string;
 		};
 	};
 }
 
-export default function DashboardWrapper({ initialParams }: DashboardWrapperProps) {
+export default function DashboardWrapper({
+	initialParams,
+}: DashboardWrapperProps) {
 	return <PoliceDataDashboard initialParams={initialParams} />;
 }

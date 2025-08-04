@@ -23,7 +23,7 @@ const SearchTypes = ({ data }: SearchTypesProps) => {
 		theme.palette.success.main,
 		theme.palette.warning.main,
 		theme.palette.error.main,
-		theme.palette.info.main
+		theme.palette.info.main,
 	];
 
 	// Chart options
@@ -51,11 +51,11 @@ const SearchTypes = ({ data }: SearchTypesProps) => {
 			theme: theme.palette.mode === "dark" ? "dark" : "light",
 			fillSeriesColor: false,
 			y: {
-				formatter: function(val: number, opts: any) {
+				formatter: function (val: number, opts: any) {
 					const percentage = data[opts.seriesIndex]?.percentage || 0;
 					return `${val.toLocaleString()} (${percentage}%)`;
-				}
-			}
+				},
+			},
 		},
 		stroke: {
 			show: false,
@@ -79,13 +79,18 @@ const SearchTypes = ({ data }: SearchTypesProps) => {
 	};
 
 	// Prepare series data for chart
-	const seriescolumnchart = data.map(item => item.value);
+	const seriescolumnchart = data.map((item) => item.value);
 
 	// Show empty state if no data
 	if (!data || data.length === 0) {
 		return (
 			<DashboardCard title="Search Types">
-				<Typography variant="body2" color="text.secondary" textAlign="center" py={4}>
+				<Typography
+					variant="body2"
+					color="text.secondary"
+					textAlign="center"
+					py={4}
+				>
 					No search type data available
 				</Typography>
 			</DashboardCard>
@@ -107,7 +112,12 @@ const SearchTypes = ({ data }: SearchTypesProps) => {
 				<Grid size={{ xs: 12 }}>
 					<Stack spacing={1} mt={5} direction="column">
 						{data.slice(0, 6).map((item, index) => (
-							<Stack key={item.name} direction="row" spacing={1} alignItems="center">
+							<Stack
+								key={item.name}
+								direction="row"
+								spacing={1}
+								alignItems="center"
+							>
 								<Avatar
 									sx={{
 										width: 9,
@@ -124,7 +134,7 @@ const SearchTypes = ({ data }: SearchTypesProps) => {
 										fontSize: "0.75rem",
 										overflow: "hidden",
 										textOverflow: "ellipsis",
-										whiteSpace: "nowrap"
+										whiteSpace: "nowrap",
 									}}
 									title={item.name}
 								>
@@ -132,9 +142,10 @@ const SearchTypes = ({ data }: SearchTypesProps) => {
 								</Typography>
 								<Chip
 									sx={{
-										backgroundColor: colors[index % colors.length],
+										backgroundColor:
+											colors[index % colors.length],
 										color: "#fff",
-										fontSize: "0.75rem"
+										fontSize: "0.75rem",
 									}}
 									size="small"
 									label={`${item.value.toLocaleString()} (${item.percentage}%)`}

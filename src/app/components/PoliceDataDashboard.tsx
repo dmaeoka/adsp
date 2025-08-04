@@ -1,18 +1,19 @@
 "use client";
 
 import { useState, useEffect, useCallback, Suspense } from "react";
-import { useRouter, useSearchParams, usePathname } from "next/navigation";
+import { useSearchParams, usePathname } from "next/navigation";
 import { Grid, Box, Typography, CircularProgress } from "@mui/material";
 import { usePoliceForce } from "../contexts/PoliceForceContext";
 
 // Components
 import StatsCard from "./StatsCard";
 import GenderDistribution from "./GenderDistribution";
-import AgeDistribution from './AgeDistribution';
-import EthnicityDistribution from './EthnicityDistribution';
+import AgeDistribution from "./AgeDistribution";
+import EthnicityDistribution from "./EthnicityDistribution";
 import SearchTypes from "./SearchTypes";
 import SearchOutcomes from "./SearchOutcomes";
 import TableRecords from "./TableRecords";
+import PoliceMap from "./PoliceMap";
 
 interface StopSearchRecord {
 	id?: string;
@@ -60,11 +61,6 @@ interface PoliceDataDashboardProps {
 		};
 		searchParams: {
 			date?: string;
-			page?: string;
-			limit?: string;
-			sort?: string;
-			sortBy?: string;
-			search?: string;
 		};
 	};
 }
@@ -88,7 +84,9 @@ function DashboardContent({ initialParams }: PoliceDataDashboardProps) {
 
 	const [isLoading, setIsLoading] = useState(false);
 	const [data, setData] = useState<StopSearchRecord[]>([]);
-	const [dataCache, setDataCache] = useState<Map<string, CacheData>>(new Map());
+	const [dataCache, setDataCache] = useState<Map<string, CacheData>>(
+		new Map(),
+	);
 
 	const [stats, setStats] = useState<StatsData>({
 		total: 0,
@@ -124,70 +122,83 @@ function DashboardContent({ initialParams }: PoliceDataDashboardProps) {
 		if (urlParams.date !== selectedMonth) {
 			setSelectedMonth(urlParams.date);
 		}
-	}, [parseURLParams, selectedForce, selectedMonth, setSelectedForce, setSelectedMonth]);
+	}, [
+		parseURLParams,
+		selectedForce,
+		selectedMonth,
+		setSelectedForce,
+		setSelectedMonth,
+	]);
 
-	const fetchData = useCallback(async (month: string, force: string) => {
-		if (!month || !force) {
-			setData([]);
-			setStats({
-				total: 0,
-				searchTypes: [],
-				outcomes: [],
-				demographics: { ageRange: [], gender: [], ethnicity: [] },
-			});
-			return;
-		}
-
-		const cacheKey = `${force}-${month}`;
-
-		if (dataCache.has(cacheKey)) {
-			const cachedData = dataCache.get(cacheKey);
-			if (cachedData) {
-				setData(cachedData.data);
-				setStats(cachedData.stats);
+	const fetchData = useCallback(
+		async (month: string, force: string) => {
+			if (!month || !force) {
+				setData([]);
+				setStats({
+					total: 0,
+					searchTypes: [],
+					outcomes: [],
+					demographics: { ageRange: [], gender: [], ethnicity: [] },
+				});
 				return;
 			}
-		}
 
-		setIsLoading(true);
+			const cacheKey = `${force}-${month}`;
 
-		try {
-			const response = await fetch(
-				`/api/police-data?date=${month}&force=${force}`,
-			);
-
-			if (!response.ok) {
-				throw new Error(`Failed to fetch data: ${response.status}`);
+			if (dataCache.has(cacheKey)) {
+				const cachedData = dataCache.get(cacheKey);
+				if (cachedData) {
+					setData(cachedData.data);
+					setStats(cachedData.stats);
+					return;
+				}
 			}
 
-			const result: { error?: string; data?: StopSearchRecord[] } = await response.json();
+			setIsLoading(true);
 
-			if (result.error) {
-				throw new Error(result.error);
+			try {
+				const response = await fetch(
+					`/api/police-data?date=${month}&force=${force}`,
+				);
+
+				if (!response.ok) {
+					throw new Error(`Failed to fetch data: ${response.status}`);
+				}
+
+				const result: { error?: string; data?: StopSearchRecord[] } =
+					await response.json();
+
+				if (result.error) {
+					throw new Error(result.error);
+				}
+
+				const records = result.data || [];
+				setData(records);
+
+				const newStats = generateStats(records);
+				setStats(newStats);
+
+				setDataCache((prev) =>
+					new Map(prev).set(cacheKey, {
+						data: records,
+						stats: newStats,
+					}),
+				);
+			} catch (err) {
+				console.error("Error fetching data:", err);
+				setData([]);
+				setStats({
+					total: 0,
+					searchTypes: [],
+					outcomes: [],
+					demographics: { ageRange: [], gender: [], ethnicity: [] },
+				});
+			} finally {
+				setIsLoading(false);
 			}
-
-			const records = result.data || [];
-			setData(records);
-
-			const newStats = generateStats(records);
-			setStats(newStats);
-
-			setDataCache((prev) =>
-				new Map(prev).set(cacheKey, { data: records, stats: newStats }),
-			);
-		} catch (err) {
-			console.error("Error fetching data:", err);
-			setData([]);
-			setStats({
-				total: 0,
-				searchTypes: [],
-				outcomes: [],
-				demographics: { ageRange: [], gender: [], ethnicity: [] },
-			});
-		} finally {
-			setIsLoading(false);
-		}
-	}, [dataCache]);
+		},
+		[dataCache],
+	);
 
 	const generateStats = (records: StopSearchRecord[]): StatsData => {
 		const total = records.length;
@@ -202,11 +213,14 @@ function DashboardContent({ initialParams }: PoliceDataDashboardProps) {
 		}
 
 		// Count search types
-		const typeCount = records.reduce((acc: Record<string, number>, record) => {
-			const type = record.type || "Unknown";
-			acc[type] = (acc[type] || 0) + 1;
-			return acc;
-		}, {});
+		const typeCount = records.reduce(
+			(acc: Record<string, number>, record) => {
+				const type = record.type || "Unknown";
+				acc[type] = (acc[type] || 0) + 1;
+				return acc;
+			},
+			{},
+		);
 
 		const searchTypes = Object.entries(typeCount)
 			.map(([name, value]) => ({
@@ -217,11 +231,14 @@ function DashboardContent({ initialParams }: PoliceDataDashboardProps) {
 			.sort((a, b) => b.value - a.value);
 
 		// Count outcomes
-		const outcomeCount = records.reduce((acc: Record<string, number>, record) => {
-			const outcome = record.outcome || "Unknown";
-			acc[outcome] = (acc[outcome] || 0) + 1;
-			return acc;
-		}, {});
+		const outcomeCount = records.reduce(
+			(acc: Record<string, number>, record) => {
+				const outcome = record.outcome || "Unknown";
+				acc[outcome] = (acc[outcome] || 0) + 1;
+				return acc;
+			},
+			{},
+		);
 
 		const outcomes = Object.entries(outcomeCount)
 			.map(([name, value]) => ({
@@ -232,23 +249,33 @@ function DashboardContent({ initialParams }: PoliceDataDashboardProps) {
 			.sort((a, b) => b.value - a.value);
 
 		// Demographics
-		const ageCount = records.reduce((acc: Record<string, number>, record) => {
-			const age = record.age_range || "Not specified";
-			acc[age] = (acc[age] || 0) + 1;
-			return acc;
-		}, {});
+		const ageCount = records.reduce(
+			(acc: Record<string, number>, record) => {
+				const age = record.age_range || "Not specified";
+				acc[age] = (acc[age] || 0) + 1;
+				return acc;
+			},
+			{},
+		);
 
-		const genderCount = records.reduce((acc: Record<string, number>, record) => {
-			const gender = record.gender || "Not specified";
-			acc[gender] = (acc[gender] || 0) + 1;
-			return acc;
-		}, {});
+		const genderCount = records.reduce(
+			(acc: Record<string, number>, record) => {
+				const gender = record.gender || "Not specified";
+				acc[gender] = (acc[gender] || 0) + 1;
+				return acc;
+			},
+			{},
+		);
 
-		const ethnicityCount = records.reduce((acc: Record<string, number>, record) => {
-			const ethnicity = record.self_defined_ethnicity || "Not specified";
-			acc[ethnicity] = (acc[ethnicity] || 0) + 1;
-			return acc;
-		}, {});
+		const ethnicityCount = records.reduce(
+			(acc: Record<string, number>, record) => {
+				const ethnicity =
+					record.self_defined_ethnicity || "Not specified";
+				acc[ethnicity] = (acc[ethnicity] || 0) + 1;
+				return acc;
+			},
+			{},
+		);
 
 		return {
 			total,
@@ -290,11 +317,18 @@ function DashboardContent({ initialParams }: PoliceDataDashboardProps) {
 	// Show loading state (either forces loading or data loading)
 	if (isLoadingForces || isLoading) {
 		return (
-			<Box display="flex" justifyContent="center" alignItems="center" minHeight="400px">
+			<Box
+				display="flex"
+				justifyContent="center"
+				alignItems="center"
+				minHeight="400px"
+			>
 				<Box textAlign="center">
 					<CircularProgress size={48} sx={{ mb: 2 }} />
 					<Typography variant="h6" color="text.secondary">
-						{isLoadingForces ? "Loading police forces..." : `Loading ${getCurrentForceName()} data for ${getFormattedMonth()}...`}
+						{isLoadingForces
+							? "Loading police forces..."
+							: `Loading ${getCurrentForceName()} data for ${getFormattedMonth()}...`}
 					</Typography>
 				</Box>
 			</Box>
@@ -302,7 +336,8 @@ function DashboardContent({ initialParams }: PoliceDataDashboardProps) {
 	}
 
 	// Show empty state
-	const showEmptyState = !selectedMonth || !selectedForce || stats.total === 0;
+	const showEmptyState =
+		!selectedMonth || !selectedForce || stats.total === 0;
 
 	if (showEmptyState) {
 		return (
@@ -324,7 +359,6 @@ function DashboardContent({ initialParams }: PoliceDataDashboardProps) {
 	return (
 		<Box>
 			<Grid container spacing={3}>
-				{/* Stats Cards */}
 				<Grid size={{ xs: 6, lg: 3 }}>
 					<StatsCard
 						title="Total Stop & Searches"
@@ -350,7 +384,6 @@ function DashboardContent({ initialParams }: PoliceDataDashboardProps) {
 					/>
 				</Grid>
 
-				{/* Charts */}
 				<Grid size={{ xs: 12, lg: 4 }}>
 					<GenderDistribution data={stats.demographics.gender} />
 				</Grid>
@@ -368,10 +401,11 @@ function DashboardContent({ initialParams }: PoliceDataDashboardProps) {
 				</Grid>
 
 				<Grid size={{ xs: 12 }}>
-					<EthnicityDistribution data={stats.demographics.ethnicity} />
+					<EthnicityDistribution
+						data={stats.demographics.ethnicity}
+					/>
 				</Grid>
 
-				{/* Table */}
 				<Grid size={{ xs: 12 }}>
 					<TableRecords
 						data={data}
@@ -379,6 +413,11 @@ function DashboardContent({ initialParams }: PoliceDataDashboardProps) {
 						month={getFormattedMonth()}
 					/>
 				</Grid>
+
+				<Grid size={{ xs: 12 }}>
+					<PoliceMap />
+				</Grid>
+
 			</Grid>
 		</Box>
 	);
@@ -387,7 +426,12 @@ function DashboardContent({ initialParams }: PoliceDataDashboardProps) {
 // Loading fallback component
 function DashboardFallback() {
 	return (
-		<Box display="flex" justifyContent="center" alignItems="center" minHeight="400px">
+		<Box
+			display="flex"
+			justifyContent="center"
+			alignItems="center"
+			minHeight="400px"
+		>
 			<Box textAlign="center">
 				<CircularProgress size={48} sx={{ mb: 2 }} />
 				<Typography variant="h6" color="text.secondary">
@@ -399,7 +443,9 @@ function DashboardFallback() {
 }
 
 // Main dashboard component with Suspense wrapper
-export default function PoliceDataDashboard({ initialParams }: PoliceDataDashboardProps) {
+export default function PoliceDataDashboard({
+	initialParams,
+}: PoliceDataDashboardProps) {
 	return (
 		<Suspense fallback={<DashboardFallback />}>
 			<DashboardContent initialParams={initialParams} />

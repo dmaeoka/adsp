@@ -1,7 +1,13 @@
 // src/app/contexts/PoliceForceContext.tsx
 "use client";
 
-import React, { createContext, useContext, useState, useEffect, ReactNode } from 'react';
+import React, {
+	createContext,
+	useContext,
+	useState,
+	useEffect,
+	ReactNode,
+} from "react";
 
 interface PoliceForce {
 	id: string;
@@ -19,7 +25,9 @@ interface PoliceForceContextType {
 	getFormattedMonth: () => string;
 }
 
-const PoliceForceContext = createContext<PoliceForceContextType | undefined>(undefined);
+const PoliceForceContext = createContext<PoliceForceContextType | undefined>(
+	undefined,
+);
 
 interface PoliceForceProviderProps {
 	children: ReactNode;
@@ -36,10 +44,14 @@ export function PoliceForceProvider({ children }: PoliceForceProviderProps) {
 		const fetchForces = async () => {
 			try {
 				setIsLoadingForces(true);
-				const response = await fetch("https://data.police.uk/api/forces");
+				const response = await fetch(
+					"https://data.police.uk/api/forces",
+				);
 
 				if (!response.ok) {
-					throw new Error(`Failed to fetch forces: ${response.status}`);
+					throw new Error(
+						`Failed to fetch forces: ${response.status}`,
+					);
 				}
 
 				const forcesData: PoliceForce[] = await response.json();
@@ -105,7 +117,9 @@ export function PoliceForceProvider({ children }: PoliceForceProviderProps) {
 export function usePoliceForce() {
 	const context = useContext(PoliceForceContext);
 	if (context === undefined) {
-		throw new Error('usePoliceForce must be used within a PoliceForceProvider');
+		throw new Error(
+			"usePoliceForce must be used within a PoliceForceProvider",
+		);
 	}
 	return context;
 }

@@ -8,11 +8,6 @@ interface PageProps {
 	}>;
 	searchParams: Promise<{
 		date?: string;
-		page?: string;
-		limit?: string;
-		sort?: string;
-		sortBy?: string;
-		search?: string;
 	}>;
 }
 
@@ -30,7 +25,7 @@ export default async function DynamicDashboardPage({
 			<DashboardClient
 				initialParams={{
 					params: resolvedParams,
-					searchParams: resolvedSearchParams
+					searchParams: resolvedSearchParams,
 				}}
 			/>
 		</PageContainer>

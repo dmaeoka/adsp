@@ -31,7 +31,6 @@ export default function RootLayout({
 }: {
 	children: React.ReactNode;
 }) {
-
 	const [isSidebarOpen, setSidebarOpen] = useState(true);
 	const [isMobileSidebarOpen, setMobileSidebarOpen] = useState(false);
 
@@ -45,17 +44,27 @@ export default function RootLayout({
 							<Sidebar
 								isSidebarOpen={isSidebarOpen}
 								isMobileSidebarOpen={isMobileSidebarOpen}
-								onSidebarClose={() => setMobileSidebarOpen(false)}
+								onSidebarClose={() =>
+									setMobileSidebarOpen(false)
+								}
 							/>
 							<PageWrapper className="page-wrapper">
-								<Header toggleMobileSidebar={() => setMobileSidebarOpen(true)}/>
+								<Header
+									toggleMobileSidebar={() =>
+										setMobileSidebarOpen(true)
+									}
+								/>
 								<Container
 									sx={{
 										paddingTop: "20px",
 										maxWidth: "1200px",
 									}}
 								>
-									<Box sx={{ minHeight: "calc(100vh - 170px)" }}>
+									<Box
+										sx={{
+											minHeight: "calc(100vh - 170px)",
+										}}
+									>
 										{children}
 									</Box>
 								</Container>

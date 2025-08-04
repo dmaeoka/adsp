@@ -21,7 +21,7 @@ const GenderDistribution = ({ data }: GenderDistributionProps) => {
 		theme.palette.secondary.main,
 		theme.palette.success.main,
 		theme.palette.warning.main,
-		theme.palette.error.main
+		theme.palette.error.main,
 	];
 
 	// Chart options
@@ -71,13 +71,18 @@ const GenderDistribution = ({ data }: GenderDistributionProps) => {
 	};
 
 	// Prepare series data for chart
-	const seriescolumnchart = data.map(item => item.value);
+	const seriescolumnchart = data.map((item) => item.value);
 
 	// Show empty state if no data
 	if (!data || data.length === 0) {
 		return (
 			<DashboardCard title="Gender Distribution">
-				<Typography variant="body2" color="text.secondary" textAlign="center" py={4}>
+				<Typography
+					variant="body2"
+					color="text.secondary"
+					textAlign="center"
+					py={4}
+				>
 					No gender data available
 				</Typography>
 			</DashboardCard>
@@ -99,7 +104,12 @@ const GenderDistribution = ({ data }: GenderDistributionProps) => {
 				<Grid size={{ xs: 12 }}>
 					<Stack spacing={1} mt={5} direction="column">
 						{data.slice(0, 5).map((item, index) => (
-							<Stack key={item.name} direction="row" spacing={1} alignItems="center">
+							<Stack
+								key={item.name}
+								direction="row"
+								spacing={1}
+								alignItems="center"
+							>
 								<Avatar
 									sx={{
 										width: 9,
@@ -108,14 +118,19 @@ const GenderDistribution = ({ data }: GenderDistributionProps) => {
 										svg: { display: "none" },
 									}}
 								></Avatar>
-								<Typography variant="subtitle2" color="textSecondary" sx={{ minWidth: 60 }}>
+								<Typography
+									variant="subtitle2"
+									color="textSecondary"
+									sx={{ minWidth: 60 }}
+								>
 									{item.name}
 								</Typography>
 								<Chip
 									sx={{
-										backgroundColor: colors[index % colors.length],
+										backgroundColor:
+											colors[index % colors.length],
 										color: "#fff",
-										fontSize: "0.75rem"
+										fontSize: "0.75rem",
 									}}
 									size="small"
 									label={`${item.value.toLocaleString()} (${item.percentage}%)`}

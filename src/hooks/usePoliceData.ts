@@ -48,7 +48,9 @@ const initialFilters: FilterState = {
 
 // Helper function to filter out null values and ensure string array
 function filterNullValues(arr: (string | null)[]): string[] {
-	return arr.filter((item): item is string => item !== null && item !== undefined);
+	return arr.filter(
+		(item): item is string => item !== null && item !== undefined,
+	);
 }
 
 export function usePoliceData(): UsePoliceDataResult {

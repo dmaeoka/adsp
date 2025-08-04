@@ -52,14 +52,22 @@ function HeaderContent({ toggleMobileSidebar }: ItemType) {
 					<IconMenu width="20" height="20" />
 				</IconButton>
 
-				<Box sx={{ flexGrow: 1, display: 'flex', alignItems: 'center', gap: 2, ml: { lg: 0, xs: 1 } }}>
+				<Box
+					sx={{
+						flexGrow: 1,
+						display: "flex",
+						alignItems: "center",
+						gap: 2,
+						ml: { lg: 0, xs: 1 },
+					}}
+				>
 					<Typography
 						variant="h3"
 						component="div"
 						sx={{
-							display: { xs: 'none', sm: 'block' },
+							display: { xs: "none", sm: "block" },
 							fontWeight: 600,
-							color: 'text.primary'
+							color: "text.primary",
 						}}
 					>
 						Police Stop & Search Dashboard - {getCurrentForceName()}
@@ -104,14 +112,22 @@ function HeaderFallback({ toggleMobileSidebar }: ItemType) {
 					<IconMenu width="20" height="20" />
 				</IconButton>
 
-				<Box sx={{ flexGrow: 1, display: 'flex', alignItems: 'center', gap: 2, ml: { lg: 0, xs: 1 } }}>
+				<Box
+					sx={{
+						flexGrow: 1,
+						display: "flex",
+						alignItems: "center",
+						gap: 2,
+						ml: { lg: 0, xs: 1 },
+					}}
+				>
 					<Typography
 						variant="h3"
 						component="div"
 						sx={{
-							display: { xs: 'none', sm: 'block' },
+							display: { xs: "none", sm: "block" },
 							fontWeight: 600,
-							color: 'text.primary'
+							color: "text.primary",
 						}}
 					>
 						Police Stop & Search Dashboard
@@ -125,7 +141,11 @@ function HeaderFallback({ toggleMobileSidebar }: ItemType) {
 // Main Header component with Suspense wrapper
 const Header = ({ toggleMobileSidebar }: ItemType) => {
 	return (
-		<Suspense fallback={<HeaderFallback toggleMobileSidebar={toggleMobileSidebar} />}>
+		<Suspense
+			fallback={
+				<HeaderFallback toggleMobileSidebar={toggleMobileSidebar} />
+			}
+		>
 			<HeaderContent toggleMobileSidebar={toggleMobileSidebar} />
 		</Suspense>
 	);
