@@ -34,6 +34,7 @@ This project fulfills all requirements specified in the ADSP interview brief:
 ## Tech Stack
 
 ### Frontend
+
 - **Framework**: Next.js 15 with App Router
 - **UI Library**: React 19 with TypeScript
 - **Styling**: Material-UI (MUI) with custom theme
@@ -42,11 +43,13 @@ This project fulfills all requirements specified in the ADSP interview brief:
 - **Icons**: Tabler Icons
 
 ### Backend
+
 - **API Routes**: Next.js API routes for data fetching
 - **Data Source**: UK Police Data API (https://data.police.uk/api)
 - **Caching**: In-memory caching with TTL
 
 ### Development & Deployment
+
 - **Language**: TypeScript
 - **Testing**: Cypress for E2E testing
 - **Containerization**: Docker with multi-stage builds
@@ -63,20 +66,23 @@ This project fulfills all requirements specified in the ADSP interview brief:
 ### Local Development
 
 1. **Clone the repository**
-   ```bash
-   git clone https://github.com/dmaeoka/adsp
-   cd adsp
-   ```
+
+    ```bash
+    git clone https://github.com/dmaeoka/adsp
+    cd adsp
+    ```
 
 2. **Install dependencies**
-   ```bash
-   npm install
-   ```
+
+    ```bash
+    npm install
+    ```
 
 3. **Run the development server**
-   ```bash
-   npm run dev
-   ```
+
+    ```bash
+    npm run dev
+    ```
 
 4. **Open your browser**
    Navigate to [http://localhost:3000](http://localhost:3000)
@@ -89,22 +95,24 @@ This project fulfills all requirements specified in the ADSP interview brief:
 - `npm run lint` - Run ESLint
 - `npm run test:e2e` - Run Cypress E2E tests
 
-
 ## Features
 
 ### Dashboard Analytics
+
 - **Real-time Statistics**: Total searches, search types, outcomes, and data periods
 - **Demographic Analysis**: Age, gender, and ethnicity distributions
 - **Search Type Breakdown**: Visual analysis of different search categories
 - **Outcome Analysis**: Comprehensive outcome tracking and trends
 
 ### Interactive Visualizations
+
 - **Donut Charts**: Gender, age, and search type distributions
 - **Bar Charts**: Search outcomes and trend analysis
 - **Interactive Map**: Geographic visualization with clustering and popups
 - **Data Tables**: Sortable, filterable, and paginated record views
 
 ### User Experience
+
 - **Responsive Design**: Optimized for desktop, tablet, and mobile devices
 - **Advanced Filtering**: Multi-criteria filtering with real-time updates
 - **Search Functionality**: Text search across all record fields
@@ -113,18 +121,22 @@ This project fulfills all requirements specified in the ADSP interview brief:
 ## Internal API Routes
 
 ### GET `/api/police-data`
+
 Fetches stop and search data for a specific month and police force.
 
 **Parameters:**
+
 - `date` (required): Date in YYYY-MM format
 - `force` (optional): Police force ID (defaults to 'metropolitan')
 
 **Example:**
+
 ```bash
 curl "http://localhost:3000/api/police-data?date=2024-01&force=metropolitan"
 ```
 
 **Response:**
+
 ```json
 {
   "data": [...],
@@ -142,6 +154,7 @@ curl "http://localhost:3000/api/police-data?date=2024-01&force=metropolitan"
 - **Data Coverage**: Historical data varies by police force (typically 2-3 years)
 
 ### Application Structure
+
 ```
 ├── src/app/                    # Next.js app directory
 │   ├── [force]/               # Dynamic route for police forces
@@ -153,6 +166,7 @@ curl "http://localhost:3000/api/police-data?date=2024-01&force=metropolitan"
 ```
 
 ### Data Flow
+
 ```
 UK Police API → Internal API Route → Client Cache → React Components
                      ↓
@@ -182,12 +196,14 @@ UK Police API → Internal API Route → Client Cache → React Components
 ## Security & Error Handling
 
 ### Security Measures
+
 - **Input Validation**: All API inputs validated and sanitized
 - **CORS Configuration**: Proper cross-origin resource sharing
 - **No Sensitive Data**: Public API with no authentication required
 - **Rate Limiting**: API rate limiting with exponential backoff
 
 ### Error Handling
+
 - **API Failures**: Graceful degradation with retry logic
 - **Network Issues**: Offline detection and user feedback
 - **Data Validation**: Client and server-side validation
@@ -207,6 +223,7 @@ npx cypress run --spec "cypress/e2e/api.cy.ts"
 ```
 
 ### Test Coverage
+
 - Dashboard loading and rendering
 - API endpoint functionality
 - User interactions and filtering
@@ -225,6 +242,7 @@ npx cypress run --spec "cypress/e2e/api.cy.ts"
 ## Development
 
 ### Project Structure
+
 - **Components**: Modular, reusable React components
 - **Contexts**: Global state management with React Context
 - **API Routes**: Server-side API endpoints
@@ -232,6 +250,7 @@ npx cypress run --spec "cypress/e2e/api.cy.ts"
 - **Utils**: Helper functions and services
 
 ### Code Quality
+
 - **TypeScript**: Strict type checking
 - **ESLint**: Code linting and best practices
 - **Prettier**: Code formatting
