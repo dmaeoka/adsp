@@ -7,6 +7,8 @@ import { styled, Container, Box } from "@mui/material";
 import React, { useState } from "react";
 import Sidebar from "@/app/components/Sidebar";
 import Header from "@/app/components/Header";
+import { PoliceForceProvider } from "@/app/contexts/PoliceForceContext";
+
 import "./global.css";
 
 const MainWrapper = styled("div")(() => ({
@@ -38,26 +40,28 @@ export default function RootLayout({
 			<body>
 				<ThemeProvider theme={baselightTheme}>
 					<CssBaseline />
-					<MainWrapper className="mainwrapper">
-						<Sidebar
-							isSidebarOpen={isSidebarOpen}
-							isMobileSidebarOpen={isMobileSidebarOpen}
-							onSidebarClose={() => setMobileSidebarOpen(false)}
-						/>
-						<PageWrapper className="page-wrapper">
-							<Header toggleMobileSidebar={() => setMobileSidebarOpen(true)}/>
-							<Container
-								sx={{
-									paddingTop: "20px",
-									maxWidth: "1200px",
-								}}
-							>
-								<Box sx={{ minHeight: "calc(100vh - 170px)" }}>
-									{children}
-								</Box>
-							</Container>
-						</PageWrapper>
-					</MainWrapper>
+					<PoliceForceProvider>
+						<MainWrapper className="mainwrapper">
+							<Sidebar
+								isSidebarOpen={isSidebarOpen}
+								isMobileSidebarOpen={isMobileSidebarOpen}
+								onSidebarClose={() => setMobileSidebarOpen(false)}
+							/>
+							<PageWrapper className="page-wrapper">
+								<Header toggleMobileSidebar={() => setMobileSidebarOpen(true)}/>
+								<Container
+									sx={{
+										paddingTop: "20px",
+										maxWidth: "1200px",
+									}}
+								>
+									<Box sx={{ minHeight: "calc(100vh - 170px)" }}>
+										{children}
+									</Box>
+								</Container>
+							</PageWrapper>
+						</MainWrapper>
+					</PoliceForceProvider>
 				</ThemeProvider>
 			</body>
 		</html>

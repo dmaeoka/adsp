@@ -30,7 +30,7 @@ const EthnicityDistribution = ({ data }: EthnicityDistributionProps) => {
 		"#FFEAA7",
 		"#DDA0DD",
 		"#98D8C8",
-		"#F7DC6F",
+		"#989898",
 		"#BB8FCE"
 	];
 

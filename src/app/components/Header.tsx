@@ -1,4 +1,4 @@
-// src/app//components/Header.tsx
+// src/app/components/Header.tsx
 import React, { useState, useEffect, Suspense } from "react";
 import {
 	Box,
@@ -9,40 +9,16 @@ import {
 	Typography,
 } from "@mui/material";
 import PropTypes from "prop-types";
-import { usePathname, useSearchParams } from "next/navigation";
 import { IconMenu } from "@tabler/icons-react";
+import { usePoliceForce } from "../contexts/PoliceForceContext";
 
 interface ItemType {
 	toggleMobileSidebar: (event: React.MouseEvent<HTMLElement>) => void;
 }
 
-// Separate component that uses useSearchParams
+// Separate component that uses useSearchParams and context
 function HeaderContent({ toggleMobileSidebar }: ItemType) {
-	const pathname = usePathname();
-	const searchParams = useSearchParams();
-	const [selectedMonth, setSelectedMonth] = useState("");
-
-	// Parse current values from URL
-	useEffect(() => {
-		const pathParts = pathname.split("/");
-		const monthFromParams = searchParams.get("date") || "";
-
-		setSelectedMonth(monthFromParams);
-	}, [pathname, searchParams]);
-
-	// Fetch police forces
-	const getFormattedMonth = () => {
-		if (!selectedMonth) return "No month selected";
-		try {
-			const date = new Date(selectedMonth + "-01");
-			return date.toLocaleDateString("en-GB", {
-				year: "numeric",
-				month: "long",
-			});
-		} catch {
-			return selectedMonth;
-		}
-	};
+	const { getCurrentForceName } = usePoliceForce();
 
 	const AppBarStyled = styled(AppBar)(({ theme }) => ({
 		boxShadow: "none",
@@ -86,7 +62,7 @@ function HeaderContent({ toggleMobileSidebar }: ItemType) {
 							color: 'text.primary'
 						}}
 					>
-						Police Stop & Search Dashboard - {getFormattedMonth()}
+						Police Stop & Search Dashboard - {getCurrentForceName()}
 					</Typography>
 				</Box>
 			</ToolbarStyled>

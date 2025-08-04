@@ -1,5 +1,5 @@
-// src/app//components/SidebarItems.tsx
-import React, { useState, useEffect, useCallback, Suspense } from "react";
+// src/app/components/SidebarItems.tsx
+import React, { useEffect, useCallback, Suspense, useRef } from "react";
 import {
 	Box,
 	Select,
@@ -16,11 +16,7 @@ import {
 } from "react-mui-sidebar";
 import Link from "next/link";
 import { usePathname, useRouter, useSearchParams } from "next/navigation";
-
-interface PoliceForce {
-	id: string;
-	name: string;
-}
+import { usePoliceForce } from "../contexts/PoliceForceContext";
 
 // Separate component that uses useSearchParams
 function SidebarContent() {
@@ -28,56 +24,32 @@ function SidebarContent() {
 	const router = useRouter();
 	const searchParams = useSearchParams();
 
-	// State for forces and selections
-	const [forces, setForces] = useState<PoliceForce[]>([]);
-	const [isLoadingForces, setIsLoadingForces] = useState(true);
-	const [selectedForce, setSelectedForce] = useState("");
-	const [selectedMonth, setSelectedMonth] = useState("");
+	const {
+		forces,
+		isLoadingForces,
+		selectedForce,
+		selectedMonth,
+		setSelectedForce,
+		setSelectedMonth,
+	} = usePoliceForce();
 
-	// Parse current values from URL
+	// Track if we've already initialized to prevent loops
+	const hasInitialized = useRef(false);
+
+	// Parse current values from URL and update context
 	useEffect(() => {
 		const pathParts = pathname.split("/");
 		const forceFromPath = pathParts[2] || "metropolitan";
 		const monthFromParams = searchParams.get("date") || "";
 
-		setSelectedForce(forceFromPath);
-		setSelectedMonth(monthFromParams);
-	}, [pathname, searchParams]);
-
-	// Fetch police forces
-	useEffect(() => {
-		const fetchForces = async () => {
-			try {
-				setIsLoadingForces(true);
-				const response = await fetch("https://data.police.uk/api/forces");
-
-				if (!response.ok) {
-					throw new Error(`Failed to fetch forces: ${response.status}`);
-				}
-
-				const forcesData: PoliceForce[] = await response.json();
-				const sortedForces = forcesData
-					.map((force) => ({
-						id: force.id,
-						name: force.name,
-					}))
-					.sort((a: PoliceForce, b: PoliceForce) =>
-						a.name.localeCompare(b.name),
-					);
-
-				setForces(sortedForces);
-			} catch (err) {
-				console.error("Error fetching forces:", err);
-				setForces([
-					{ id: "metropolitan", name: "Metropolitan Police Service" },
-				]);
-			} finally {
-				setIsLoadingForces(false);
-			}
-		};
-
-		fetchForces();
-	}, []);
+		// Only update if different to avoid unnecessary re-renders
+		if (forceFromPath !== selectedForce) {
+			setSelectedForce(forceFromPath);
+		}
+		if (monthFromParams !== selectedMonth) {
+			setSelectedMonth(monthFromParams);
+		}
+	}, [pathname, searchParams, selectedForce, selectedMonth, setSelectedForce, setSelectedMonth]);
 
 	const generateMonthOptions = () => {
 		const options = [];
@@ -133,18 +105,20 @@ function SidebarContent() {
 		const newMonth = typeof event === 'string' ? event : event.target.value;
 		setSelectedMonth(newMonth);
 		updateURL(selectedForce, newMonth);
-	}, [selectedForce, updateURL]);
+	}, [selectedForce, setSelectedMonth, updateURL]);
 
-	// Auto-set default month if none selected
+	// Auto-set default month if none selected - FIXED VERSION
 	useEffect(() => {
-		if (!selectedMonth && !isLoadingForces) {
+		// Only initialize once, when forces are loaded and we haven't initialized yet
+		if (!isLoadingForces && !hasInitialized.current && !selectedMonth && pathname.includes('/')) {
+			hasInitialized.current = true;
 			const now = new Date();
 			now.setMonth(now.getMonth() - 3);
 			const defaultMonth = now.toISOString().slice(0, 7);
 			setSelectedMonth(defaultMonth);
-			handleMonthChange(defaultMonth);
+			updateURL(selectedForce, defaultMonth);
 		}
-	}, [isLoadingForces, selectedMonth, handleMonthChange]);
+	}, [isLoadingForces, selectedMonth, pathname, selectedForce, setSelectedMonth, updateURL]);
 
 	return (
 		<>

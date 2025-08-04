@@ -3,6 +3,7 @@
 import { useState, useEffect, useCallback, Suspense } from "react";
 import { useRouter, useSearchParams, usePathname } from "next/navigation";
 import { Grid, Box, Typography, CircularProgress } from "@mui/material";
+import { usePoliceForce } from "../contexts/PoliceForceContext";
 
 // Components
 import StatsCard from "./StatsCard";
@@ -12,11 +13,6 @@ import EthnicityDistribution from './EthnicityDistribution';
 import SearchTypes from "./SearchTypes";
 import SearchOutcomes from "./SearchOutcomes";
 import TableRecords from "./TableRecords";
-
-interface PoliceForce {
-	id: string;
-	name: string;
-}
 
 interface StopSearchRecord {
 	id?: string;
@@ -78,14 +74,22 @@ function DashboardContent({ initialParams }: PoliceDataDashboardProps) {
 	const router = useRouter();
 	const searchParams = useSearchParams();
 	const pathname = usePathname();
+
+	// Use context instead of local state and API calls
+	const {
+		forces,
+		isLoadingForces,
+		selectedForce,
+		selectedMonth,
+		setSelectedForce,
+		setSelectedMonth,
+		getCurrentForceName,
+		getFormattedMonth,
+	} = usePoliceForce();
+
 	const [isLoading, setIsLoading] = useState(false);
 	const [data, setData] = useState<StopSearchRecord[]>([]);
-	const [forces, setForces] = useState<PoliceForce[]>([]);
 	const [dataCache, setDataCache] = useState<Map<string, CacheData>>(new Map());
-
-	// URL-synced state
-	const [selectedMonth, setSelectedMonth] = useState("");
-	const [selectedForce, setSelectedForce] = useState("metropolitan");
 
 	const [stats, setStats] = useState<StatsData>({
 		total: 0,
@@ -98,7 +102,7 @@ function DashboardContent({ initialParams }: PoliceDataDashboardProps) {
 		},
 	});
 
-	// Parse URL parameters
+	// Parse URL parameters and sync with context
 	const parseURLParams = useCallback(() => {
 		const pathParts = pathname.split("/");
 		const forceFromPath = pathParts[2] || "metropolitan";
@@ -110,40 +114,18 @@ function DashboardContent({ initialParams }: PoliceDataDashboardProps) {
 		};
 	}, [pathname, searchParams]);
 
-	// Initialize state from URL
+	// Initialize state from URL and sync with context
 	useEffect(() => {
 		const urlParams = parseURLParams();
-		setSelectedForce(urlParams.force);
-		setSelectedMonth(urlParams.date);
-	}, [parseURLParams]);
 
-	// Fetch available police forces
-	const fetchForces = async () => {
-		try {
-			const response = await fetch("https://data.police.uk/api/forces");
-
-			if (!response.ok) {
-				throw new Error(`Failed to fetch forces: ${response.status}`);
-			}
-
-			const forcesData: PoliceForce[] = await response.json();
-			const sortedForces = forcesData
-				.map((force) => ({
-					id: force.id,
-					name: force.name,
-				}))
-				.sort((a: PoliceForce, b: PoliceForce) =>
-					a.name.localeCompare(b.name),
-				);
-
-			setForces(sortedForces);
-		} catch (err) {
-			console.error("Error fetching forces:", err);
-			setForces([
-				{ id: "metropolitan", name: "Metropolitan Police Service" },
-			]);
+		// Only update if different to avoid unnecessary re-renders
+		if (urlParams.force !== selectedForce) {
+			setSelectedForce(urlParams.force);
 		}
-	};
+		if (urlParams.date !== selectedMonth) {
+			setSelectedMonth(urlParams.date);
+		}
+	}, [parseURLParams, selectedForce, selectedMonth, setSelectedForce, setSelectedMonth]);
 
 	const fetchData = useCallback(async (month: string, force: string) => {
 		if (!month || !force) {
@@ -299,44 +281,21 @@ function DashboardContent({ initialParams }: PoliceDataDashboardProps) {
 		};
 	};
 
-	const getCurrentForceName = () => {
-		const force = forces.find((f) => f.id === selectedForce);
-		return force ? force.name : selectedForce;
-	};
-
-	const getFormattedMonth = () => {
-		if (!selectedMonth) return "No month selected";
-		try {
-			const date = new Date(selectedMonth + "-01");
-			return date.toLocaleDateString("en-GB", {
-				year: "numeric",
-				month: "long",
-			});
-		} catch {
-			return selectedMonth;
-		}
-	};
-
-	// Initialize forces and data
+	// Watch for changes in selectedForce and selectedMonth from context
 	useEffect(() => {
-		fetchForces();
-	}, []);
-
-	// Watch for URL changes and fetch data accordingly
-	useEffect(() => {
-		if (selectedMonth && selectedForce) {
+		if (selectedMonth && selectedForce && !isLoadingForces) {
 			fetchData(selectedMonth, selectedForce);
 		}
-	}, [selectedForce, selectedMonth, fetchData]);
+	}, [selectedForce, selectedMonth, isLoadingForces, fetchData]);
 
-	// Show loading state
-	if (isLoading) {
+	// Show loading state (either forces loading or data loading)
+	if (isLoadingForces || isLoading) {
 		return (
 			<Box display="flex" justifyContent="center" alignItems="center" minHeight="400px">
 				<Box textAlign="center">
 					<CircularProgress size={48} sx={{ mb: 2 }} />
 					<Typography variant="h6" color="text.secondary">
-						Loading data...
+						{isLoadingForces ? "Loading police forces..." : `Loading ${getCurrentForceName()} data for ${getFormattedMonth()}...`}
 					</Typography>
 				</Box>
 			</Box>
@@ -357,7 +316,7 @@ function DashboardContent({ initialParams }: PoliceDataDashboardProps) {
 				<Typography variant="body2" color="text.secondary">
 					{!selectedMonth || !selectedForce
 						? "Use the sidebar to select a police force and month to view stop and search data."
-						: `No stop and search records found for ${selectedForce}.`}
+						: `No stop and search records found for ${getCurrentForceName()} in ${getFormattedMonth()}.`}
 				</Typography>
 			</Box>
 		);
@@ -413,6 +372,7 @@ function DashboardContent({ initialParams }: PoliceDataDashboardProps) {
 					<EthnicityDistribution data={stats.demographics.ethnicity} />
 				</Grid>
 
+				{/* Table */}
 				<Grid size={{ xs: 12 }}>
 					<TableRecords
 						data={data}

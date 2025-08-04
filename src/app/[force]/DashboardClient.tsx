@@ -1,4 +1,4 @@
-// src/app//[force]/DashboardClient.tsx
+// src/app/[force]/DashboardClient.tsx
 "use client";
 import dynamic from "next/dynamic";
 
@@ -19,9 +19,9 @@ interface DashboardClientProps {
 	};
 }
 
-// Dynamically import the dashboard component for better performance
-const PoliceDataDashboard = dynamic(
-	() => import("../components/PoliceDataDashboard"),
+// Dynamically import the dashboard wrapper for better performance
+const DashboardWrapper = dynamic(
+	() => import("../components/DashboardWrapper"),
 	{
 		loading: () => (
 			<div>Loading dashboard...</div>
@@ -31,5 +31,5 @@ const PoliceDataDashboard = dynamic(
 );
 
 export default function DashboardClient({ initialParams }: DashboardClientProps) {
-	return <PoliceDataDashboard initialParams={initialParams} />;
+	return <DashboardWrapper initialParams={initialParams} />;
 }
