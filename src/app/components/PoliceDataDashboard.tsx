@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useEffect, useCallback } from "react";
+import { useState, useEffect, useCallback, Suspense } from "react";
 import { useRouter, useSearchParams, usePathname } from "next/navigation";
 import { Grid, Box, Typography, CircularProgress } from "@mui/material";
 
@@ -73,8 +73,8 @@ interface PoliceDataDashboardProps {
 	};
 }
 
-// Main dashboard component
-export default function PoliceDataDashboard({ initialParams }: PoliceDataDashboardProps) {
+// Separate component that uses useSearchParams
+function DashboardContent({ initialParams }: PoliceDataDashboardProps) {
 	const router = useRouter();
 	const searchParams = useSearchParams();
 	const pathname = usePathname();
@@ -336,7 +336,7 @@ export default function PoliceDataDashboard({ initialParams }: PoliceDataDashboa
 				<Box textAlign="center">
 					<CircularProgress size={48} sx={{ mb: 2 }} />
 					<Typography variant="h6" color="text.secondary">
-						Loading {getCurrentForceName()} data for {getFormattedMonth()}...
+						Loading data...
 					</Typography>
 				</Box>
 			</Box>
@@ -357,7 +357,7 @@ export default function PoliceDataDashboard({ initialParams }: PoliceDataDashboa
 				<Typography variant="body2" color="text.secondary">
 					{!selectedMonth || !selectedForce
 						? "Use the sidebar to select a police force and month to view stop and search data."
-						: `No stop and search records found for ${getCurrentForceName()} in ${getFormattedMonth()}.`}
+						: `No stop and search records found for ${selectedForce}.`}
 				</Typography>
 			</Box>
 		);
@@ -413,7 +413,6 @@ export default function PoliceDataDashboard({ initialParams }: PoliceDataDashboa
 					<EthnicityDistribution data={stats.demographics.ethnicity} />
 				</Grid>
 
-				{/* Table */}
 				<Grid size={{ xs: 12 }}>
 					<TableRecords
 						data={data}
@@ -423,5 +422,28 @@ export default function PoliceDataDashboard({ initialParams }: PoliceDataDashboa
 				</Grid>
 			</Grid>
 		</Box>
+	);
+}
+
+// Loading fallback component
+function DashboardFallback() {
+	return (
+		<Box display="flex" justifyContent="center" alignItems="center" minHeight="400px">
+			<Box textAlign="center">
+				<CircularProgress size={48} sx={{ mb: 2 }} />
+				<Typography variant="h6" color="text.secondary">
+					Loading dashboard...
+				</Typography>
+			</Box>
+		</Box>
+	);
+}
+
+// Main dashboard component with Suspense wrapper
+export default function PoliceDataDashboard({ initialParams }: PoliceDataDashboardProps) {
+	return (
+		<Suspense fallback={<DashboardFallback />}>
+			<DashboardContent initialParams={initialParams} />
+		</Suspense>
 	);
 }

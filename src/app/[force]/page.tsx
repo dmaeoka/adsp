@@ -1,5 +1,5 @@
-// src/app/dashboard/[force]/page.tsx
-import PageContainer from "@/app/dashboard/components/PageContainer";
+// src/app//[force]/page.tsx
+import PageContainer from "@/app/components/PageContainer";
 import DashboardClient from "./DashboardClient";
 
 interface PageProps {

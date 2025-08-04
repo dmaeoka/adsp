@@ -1,4 +1,4 @@
-// src/app/dashboard/components/Sidebar.tsx
+// src/app//components/Sidebar.tsx
 import { useMediaQuery, Box, Drawer } from "@mui/material";
 import SidebarItems from "./SidebarItems";
 

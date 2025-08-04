@@ -1,5 +1,5 @@
-// src/app/dashboard/components/Header.tsx
-import React, { useState, useEffect } from "react";
+// src/app//components/Header.tsx
+import React, { useState, useEffect, Suspense } from "react";
 import {
 	Box,
 	AppBar,
@@ -16,7 +16,8 @@ interface ItemType {
 	toggleMobileSidebar: (event: React.MouseEvent<HTMLElement>) => void;
 }
 
-const Header = ({ toggleMobileSidebar }: ItemType) => {
+// Separate component that uses useSearchParams
+function HeaderContent({ toggleMobileSidebar }: ItemType) {
 	const pathname = usePathname();
 	const searchParams = useSearchParams();
 	const [selectedMonth, setSelectedMonth] = useState("");
@@ -90,6 +91,67 @@ const Header = ({ toggleMobileSidebar }: ItemType) => {
 				</Box>
 			</ToolbarStyled>
 		</AppBarStyled>
+	);
+}
+
+// Loading fallback component
+function HeaderFallback({ toggleMobileSidebar }: ItemType) {
+	const AppBarStyled = styled(AppBar)(({ theme }) => ({
+		boxShadow: "none",
+		background: theme.palette.background.paper,
+		justifyContent: "center",
+		backdropFilter: "blur(4px)",
+		[theme.breakpoints.up("lg")]: {
+			minHeight: "70px",
+		},
+	}));
+
+	const ToolbarStyled = styled(Toolbar)(({ theme }) => ({
+		width: "100%",
+		color: theme.palette.text.secondary,
+	}));
+
+	return (
+		<AppBarStyled position="sticky" color="default">
+			<ToolbarStyled>
+				<IconButton
+					color="inherit"
+					aria-label="menu"
+					onClick={toggleMobileSidebar}
+					sx={{
+						display: {
+							lg: "none",
+							xs: "inline",
+						},
+					}}
+				>
+					<IconMenu width="20" height="20" />
+				</IconButton>
+
+				<Box sx={{ flexGrow: 1, display: 'flex', alignItems: 'center', gap: 2, ml: { lg: 0, xs: 1 } }}>
+					<Typography
+						variant="h3"
+						component="div"
+						sx={{
+							display: { xs: 'none', sm: 'block' },
+							fontWeight: 600,
+							color: 'text.primary'
+						}}
+					>
+						Police Stop & Search Dashboard
+					</Typography>
+				</Box>
+			</ToolbarStyled>
+		</AppBarStyled>
+	);
+}
+
+// Main Header component with Suspense wrapper
+const Header = ({ toggleMobileSidebar }: ItemType) => {
+	return (
+		<Suspense fallback={<HeaderFallback toggleMobileSidebar={toggleMobileSidebar} />}>
+			<HeaderContent toggleMobileSidebar={toggleMobileSidebar} />
+		</Suspense>
 	);
 };
 

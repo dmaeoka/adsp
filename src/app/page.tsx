@@ -1,6 +1,6 @@
-// src/app/dashboard/page.tsx
+// src/app//page.tsx
 import { redirect } from "next/navigation";
 
 export default function DashboardPage() {
-	redirect("/dashboard/metropolitan");
+	redirect("/metropolitan");
 }

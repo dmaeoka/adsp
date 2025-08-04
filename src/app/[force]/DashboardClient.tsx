@@ -1,4 +1,4 @@
-// src/app/dashboard/[force]/DashboardClient.tsx
+// src/app//[force]/DashboardClient.tsx
 "use client";
 import dynamic from "next/dynamic";
 

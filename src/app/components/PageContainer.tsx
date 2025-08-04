@@ -1,4 +1,4 @@
-// src/app/dashboard/components/PageContainer.tsx
+// src/app//components/PageContainer.tsx
 type Props = {
 	description?: string;
 	children: React.ReactNode;

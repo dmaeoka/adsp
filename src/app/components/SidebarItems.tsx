@@ -1,5 +1,5 @@
-// src/app/dashboard/components/SidebarItems.tsx
-import React, { useState, useEffect, useCallback } from "react";
+// src/app//components/SidebarItems.tsx
+import React, { useState, useEffect, useCallback, Suspense } from "react";
 import {
 	Box,
 	Select,
@@ -22,7 +22,8 @@ interface PoliceForce {
 	name: string;
 }
 
-const SidebarItems = () => {
+// Separate component that uses useSearchParams
+function SidebarContent() {
 	const pathname = usePathname();
 	const router = useRouter();
 	const searchParams = useSearchParams();
@@ -98,7 +99,7 @@ const SidebarItems = () => {
 
 	// Update URL with new parameters
 	const updateURL = useCallback((force: string, month: string) => {
-		const newPath = `/dashboard/${force}`;
+		const newPath = `/${force}`;
 		const queryParams = new URLSearchParams();
 
 		if (month) queryParams.set("date", month);
@@ -146,16 +147,7 @@ const SidebarItems = () => {
 	}, [isLoadingForces, selectedMonth, handleMonthChange]);
 
 	return (
-		<MUI_Sidebar
-			width={"100%"}
-			showProfile={false}
-			themeColor={"#5D87FF"}
-			themeSecondaryColor={"#49beff"}
-		>
-			<Logo img="/images/logos/dark-logo.svg" component={Link} to="/">
-				Police Dashboard
-			</Logo>
-
+		<>
 			{/* Controls Section */}
 			<Box px={3} py={2}>
 				<Typography variant="h6" sx={{ mb: 2, color: 'text.primary' }}>
@@ -200,9 +192,6 @@ const SidebarItems = () => {
 						label="Month"
 						onChange={handleMonthChange}
 					>
-						<MUI_MenuItem value="">
-							<em>Select a month...</em>
-						</MUI_MenuItem>
 						{monthOptions.map((option) => (
 							<MUI_MenuItem key={option.value} value={option.value}>
 								{option.label}
@@ -211,6 +200,72 @@ const SidebarItems = () => {
 					</Select>
 				</FormControl>
 			</Box>
+		</>
+	);
+}
+
+// Loading fallback component
+function SidebarFallback() {
+	return (
+		<Box px={3} py={2}>
+			<Typography variant="h6" sx={{ mb: 2, color: 'text.primary' }}>
+				Filters
+			</Typography>
+
+			{/* Loading placeholders */}
+			<FormControl fullWidth sx={{ mb: 2 }}>
+				<InputLabel id="force-select-label">Police Force</InputLabel>
+				<Select
+					labelId="force-select-label"
+					disabled
+					value=""
+					label="Police Force"
+				>
+					<MUI_MenuItem disabled>
+						<Box display="flex" alignItems="center" gap={1}>
+							<CircularProgress size={16} />
+							Loading...
+						</Box>
+					</MUI_MenuItem>
+				</Select>
+			</FormControl>
+
+			<FormControl fullWidth sx={{ mb: 2 }}>
+				<InputLabel id="month-select-label">Month</InputLabel>
+				<Select
+					labelId="month-select-label"
+					disabled
+					value=""
+					label="Month"
+				>
+					<MUI_MenuItem disabled>
+						<Box display="flex" alignItems="center" gap={1}>
+							<CircularProgress size={16} />
+							Loading...
+						</Box>
+					</MUI_MenuItem>
+				</Select>
+			</FormControl>
+		</Box>
+	);
+}
+
+// Main SidebarItems component with Suspense wrapper
+const SidebarItems = () => {
+	return (
+		<MUI_Sidebar
+			width={"100%"}
+			showProfile={false}
+			themeColor={"#5D87FF"}
+			themeSecondaryColor={"#49beff"}
+		>
+			<Logo img="/images/logos/dark-logo.svg" component={Link} to="/">
+				Police Dashboard
+			</Logo>
+
+			<Suspense fallback={<SidebarFallback />}>
+				<SidebarContent />
+			</Suspense>
 		</MUI_Sidebar>
 	);
 };
