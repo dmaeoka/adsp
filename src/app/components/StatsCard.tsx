@@ -12,7 +12,7 @@ interface StatsCardProps {
 
 const StatsCard = ({ title, value }: StatsCardProps) => {
 	return (
-		<Card sx={{ height: "100%" }}>
+		<Card sx={{ height: "100%" }} elevation={9} variant={undefined}>
 			<CardContent>
 				<Box display="flex" alignItems="center" justifyContent="space-between" mb={2}>
 					<Typography variant="h6" color="text.secondary" sx={{ fontSize: "0.875rem" }}>
