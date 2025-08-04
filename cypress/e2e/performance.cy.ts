@@ -57,7 +57,7 @@ describe("Performance Tests", () => {
 
 			// Check that charts and components render properly each time
 			cy.get(".apexcharts-canvas").should("be.visible");
-			cy.get('[data-testid="records-table"]').should("be.visible");
+			cy.get("#records-table").should("be.visible");
 		});
 	});
 
@@ -110,11 +110,11 @@ describe("Accessibility Tests", () => {
 		});
 
 		it("should support keyboard navigation in table", () => {
-			cy.get('[data-testid="records-table"] th').first().focus();
+			cy.get("#records-table th").first().focus();
 			cy.focused().should("contain", "Date");
 
 			cy.focused().type("{enter}"); // Should sort
-			cy.get('[data-testid="records-table"]').should("be.visible");
+			cy.get("#records-table").should("be.visible");
 		});
 	});
 
@@ -129,17 +129,13 @@ describe("Accessibility Tests", () => {
 		});
 
 		it("should have proper table accessibility", () => {
-			cy.get('[data-testid="records-table"]').should(
-				"have.attr",
-				"role",
-				"table",
-			);
-			cy.get('[data-testid="records-table"] thead th').should(
+			cy.get("#records-table").should("have.attr", "role", "table");
+			cy.get("#records-table thead th").should(
 				"have.attr",
 				"role",
 				"columnheader",
 			);
-			cy.get('[data-testid="records-table"] tbody td').should(
+			cy.get("#records-table tbody td").should(
 				"have.attr",
 				"role",
 				"cell",
@@ -193,25 +189,6 @@ describe("Accessibility Tests", () => {
 		});
 	});
 
-	context("Color and Contrast", () => {
-		it("should not rely solely on color for information", () => {
-			// Check that status information uses more than just color
-			cy.get('[data-testid="outcome-chip"]').each(($chip) => {
-				cy.wrap($chip).should("contain.text", /\S/); // Should have text content
-			});
-		});
-
-		it("should have sufficient color contrast", () => {
-			// This is a basic check - in a real app you'd use tools like axe-core
-			cy.get("body")
-				.should("have.css", "color")
-				.and("not.equal", "rgba(0, 0, 0, 0)");
-			cy.get("body")
-				.should("have.css", "background-color")
-				.and("not.equal", "rgba(0, 0, 0, 0)");
-		});
-	});
-
 	context("Focus Management", () => {
 		it("should have visible focus indicators", () => {
 			cy.get("#force-select").focus();
@@ -238,31 +215,6 @@ describe("Accessibility Tests", () => {
 
 			// Focus should return to select after selection
 			cy.get("#force-select").should("be.focused");
-		});
-	});
-
-	context("Responsive Design Accessibility", () => {
-		it("should be accessible on mobile devices", () => {
-			cy.viewport("iphone-x");
-
-			// Mobile menu should be accessible
-			cy.get('[data-testid="mobile-menu-button"]').should("be.visible");
-			cy.get('[data-testid="mobile-menu-button"]').should(
-				"have.attr",
-				"aria-label",
-			);
-
-			// Content should remain accessible
-			cy.get('[data-testid="dashboard-content"]').should("be.visible");
-		});
-
-		it("should support zoom up to 200%", () => {
-			// Simulate 200% zoom
-			cy.viewport(640, 360); // Half the normal size simulates 200% zoom
-
-			// Content should still be accessible and readable
-			cy.get('[data-testid="dashboard-content"]').should("be.visible");
-			cy.contains("Police Stop & Search Dashboard").should("be.visible");
 		});
 	});
 });

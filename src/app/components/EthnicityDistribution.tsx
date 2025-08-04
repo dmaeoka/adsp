@@ -107,7 +107,7 @@ const EthnicityDistribution = ({ data }: EthnicityDistributionProps) => {
 
 	return (
 		<DashboardCard title="Ethnicity Distribution">
-			<Grid container spacing={3}>
+			<Grid container spacing={3} id="ethnicity-chart">
 				<Grid size={{ xs: 12, sm: 8 }}>
 					<Stack
 						spacing={1}

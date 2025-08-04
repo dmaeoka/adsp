@@ -17,8 +17,8 @@
 		"cypress:run:edge": "cypress run --browser edge",
 		"cypress:run:component": "cypress run --component",
 		"cypress:run:e2e": "cypress run --e2e",
-		"test:e2e": "start-server-and-test dev http://localhost:3000 cypress:run:e2e",
-		"test:e2e:headed": "start-server-and-test dev http://localhost:3000 cypress:run:headed",
+		"test:e2e": "start-server-and-test dev http://localhost:3000 'cypress run --e2e'",
+		"test:e2e:headed": "start-server-and-test dev http://localhost:3000 'cypress run --headed --e2e'",
 		"test:component": "cypress run --component",
 		"test:all": "npm run test:component && npm run test:e2e"
 	},

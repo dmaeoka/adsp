@@ -323,12 +323,8 @@ function DashboardContent({ initialParams }: PoliceDataDashboardProps) {
 				alignItems="center"
 				minHeight="400px"
 			>
-				<Box textAlign="center">
-					<CircularProgress
-						size={48}
-						sx={{ mb: 2 }}
-						data-testid="loading"
-					/>
+				<Box textAlign="center" id="loading">
+					<CircularProgress size={48} sx={{ mb: 2 }} />
 					<Typography variant="h6" color="text.secondary">
 						{isLoadingForces
 							? "Loading police forces..."
@@ -439,12 +435,8 @@ function DashboardFallback() {
 			alignItems="center"
 			minHeight="400px"
 		>
-			<Box textAlign="center">
-				<CircularProgress
-					size={48}
-					sx={{ mb: 2 }}
-					data-testid="loading"
-				/>
+			<Box textAlign="center" id="loading">
+				<CircularProgress size={48} sx={{ mb: 2 }} />
 				<Typography variant="h6" color="text.secondary">
 					Loading dashboard...
 				</Typography>

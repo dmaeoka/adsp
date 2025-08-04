@@ -644,6 +644,7 @@ export default function PoliceMap({
 						</MapContainer>
 						{stats.length > 0 && (
 							<Box
+								id="map-legend"
 								sx={{
 									position: "absolute",
 									top: 10,
@@ -655,7 +656,6 @@ export default function PoliceMap({
 									zIndex: 1000,
 									maxWidth: 200,
 								}}
-								data-testid="map-legend"
 							>
 								<Typography
 									variant="subtitle2"

@@ -83,13 +83,8 @@ Cypress.Commands.add("dataCy", (value) => {
 
 // Wait for dashboard to load
 Cypress.Commands.add("waitForDashboardLoad", () => {
-	// Wait for loading indicators to disappear
-	cy.get('[data-testid="loading"]', { timeout: 15000 }).should("not.exist");
-
-	// Wait for main content to be visible
-	cy.get('[data-testid="dashboard-content"]', { timeout: 15000 }).should(
-		"be.visible",
-	);
+	cy.get("#loading", { timeout: 15000 }).should("not.exist");
+	cy.get("#dashboard-content", { timeout: 15000 }).should("be.visible");
 
 	// Wait for API calls to complete
 	cy.intercept("GET", "/api/police-data*").as("policeData");

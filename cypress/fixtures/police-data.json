@@ -1,0 +1,55 @@
+{
+	"data": [
+		{
+			"datetime": "2024-01-15T14:30:00Z",
+			"type": "Person search",
+			"location": {
+				"latitude": "51.5074",
+				"longitude": "-0.1278",
+				"street": {
+					"name": "Oxford Street"
+				}
+			},
+			"age_range": "18-24",
+			"gender": "Male",
+			"outcome": "No further action",
+			"object_of_search": "Controlled drugs",
+			"self_defined_ethnicity": "White - English/Welsh/Scottish/Northern Irish/British"
+		},
+		{
+			"datetime": "2024-01-15T15:45:00Z",
+			"type": "Vehicle search",
+			"location": {
+				"latitude": "51.5155",
+				"longitude": "-0.0922",
+				"street": {
+					"name": "King's Cross Road"
+				}
+			},
+			"age_range": "25-34",
+			"gender": "Female",
+			"outcome": "Arrest",
+			"object_of_search": "Stolen goods",
+			"self_defined_ethnicity": "Black/African/Caribbean/Black British - African"
+		},
+		{
+			"datetime": "2024-01-16T10:20:00Z",
+			"type": "Person search",
+			"location": {
+				"latitude": "51.4994",
+				"longitude": "-0.1244",
+				"street": {
+					"name": "Westminster Bridge Road"
+				}
+			},
+			"age_range": "over 34",
+			"gender": "Male",
+			"outcome": "Caution (simple)",
+			"object_of_search": "Offensive weapons",
+			"self_defined_ethnicity": "Asian/Asian British - Pakistani"
+		}
+	],
+	"month": "2024-01",
+	"total": 3,
+	"fetched_at": "2024-01-20T10:00:00Z"
+}

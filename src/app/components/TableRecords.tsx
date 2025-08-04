@@ -177,7 +177,6 @@ const TableRecords = ({ data, forceName, month }: TableRecordsProps) => {
 
 	return (
 		<DashboardCard title={`Stop & Search Records - ${forceName}`}>
-			{/* Search and Controls */}
 			<Stack
 				direction={{ xs: "column", sm: "row" }}
 				spacing={2}
@@ -225,9 +224,9 @@ const TableRecords = ({ data, forceName, month }: TableRecordsProps) => {
 				</Typography>
 			</Stack>
 
-			{/* Table */}
 			<Box sx={{ overflow: "auto", width: { xs: "280px", sm: "auto" } }}>
 				<Table
+					id="records-table"
 					aria-label="police records table"
 					sx={{
 						whiteSpace: "nowrap",
@@ -454,6 +453,7 @@ const TableRecords = ({ data, forceName, month }: TableRecordsProps) => {
 			{/* Pagination */}
 			{processedData.length > 0 && (
 				<TablePagination
+					id="table-pagination"
 					rowsPerPageOptions={[5, 10, 25, 50, 100]}
 					component="div"
 					count={processedData.length}

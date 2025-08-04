@@ -99,7 +99,7 @@ const SearchTypes = ({ data }: SearchTypesProps) => {
 
 	return (
 		<DashboardCard title="Search Types">
-			<Grid container spacing={3}>
+			<Grid container spacing={3} id="search-types-chart">
 				<Grid size={{ xs: 12 }}>
 					<Chart
 						options={optionscolumnchart}

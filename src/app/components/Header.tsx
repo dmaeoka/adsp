@@ -36,9 +36,10 @@ function HeaderContent({ toggleMobileSidebar }: ItemType) {
 	}));
 
 	return (
-		<AppBarStyled position="sticky" color="default">
+		<AppBarStyled position="sticky" color="default" id="header">
 			<ToolbarStyled>
 				<IconButton
+					id="mobile-menu-button"
 					color="inherit"
 					aria-label="menu"
 					onClick={toggleMobileSidebar}

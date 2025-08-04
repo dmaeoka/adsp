@@ -61,6 +61,7 @@ export default function RootLayout({
 									}}
 								>
 									<Box
+										id="dashboard-content"
 										sx={{
 											minHeight: "calc(100vh - 170px)",
 										}}

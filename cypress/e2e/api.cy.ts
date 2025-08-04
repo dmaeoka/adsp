@@ -227,12 +227,14 @@ describe("Police Data API", () => {
 					// Check required fields
 					expect(record).to.have.property("datetime");
 					expect(record).to.have.property("type");
-					expect(record).to.have.property("location");
+					// Location can be null, so we check if it exists before validating
+					if (record.location) {
+						expect(record.location).to.be.an("object");
+					}
 
 					// Check data types
 					expect(record.datetime).to.be.a("string");
 					expect(record.type).to.be.a("string");
-					expect(record.location).to.be.an("object");
 
 					// Check date format
 					expect(new Date(record.datetime).toString()).to.not.equal(

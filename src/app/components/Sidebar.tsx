@@ -34,6 +34,7 @@ const MSidebar = ({
 				}}
 			>
 				<Drawer
+					id="sidebar"
 					anchor="left"
 					open={isSidebarOpen}
 					variant="permanent"
@@ -63,6 +64,7 @@ const MSidebar = ({
 
 	return (
 		<Drawer
+			id="sidebar"
 			anchor="left"
 			open={isMobileSidebarOpen}
 			onClose={onSidebarClose}

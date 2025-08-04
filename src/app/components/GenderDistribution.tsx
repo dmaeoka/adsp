@@ -91,7 +91,7 @@ const GenderDistribution = ({ data }: GenderDistributionProps) => {
 
 	return (
 		<DashboardCard title="Gender Distribution">
-			<Grid container spacing={3}>
+			<Grid container spacing={3} id="gender-chart">
 				<Grid size={{ xs: 12 }}>
 					<Chart
 						options={optionscolumnchart}

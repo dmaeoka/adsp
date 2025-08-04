@@ -1,8 +1,8 @@
 // cypress/component/StatsCard.cy.tsx
 import React from "react";
 import { ThemeProvider } from "@mui/material/styles";
-import StatsCard from "../../src/app/components/StatsCard";
-import { baselightTheme } from "../../src/utils/theme/DefaultColors";
+import StatsCard from "../../../src/app/components/StatsCard";
+import { baselightTheme } from "../../../src/utils/theme/DefaultColors";
 
 describe("StatsCard Component", () => {
 	const mountWithTheme = (component: React.ReactElement) => {

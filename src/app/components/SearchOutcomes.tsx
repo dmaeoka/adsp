@@ -1,6 +1,6 @@
 import React from "react";
 import { useTheme } from "@mui/material/styles";
-import { Typography } from "@mui/material";
+import { Typography, Box } from "@mui/material";
 import dynamic from "next/dynamic";
 import DashboardCard from "./DashboardCard";
 const Chart = dynamic(() => import("react-apexcharts"), { ssr: false });
@@ -109,13 +109,15 @@ const SearchOutcomes = ({ data }: SearchOutcomesProps) => {
 
 	return (
 		<DashboardCard title="Search Outcomes">
-			<Chart
-				options={optionscolumnchart}
-				series={seriescolumnchart}
-				type="bar"
-				height={380}
-				width={"100%"}
-			/>
+			<Box id="outcomes-chart">
+				<Chart
+					options={optionscolumnchart}
+					series={seriescolumnchart}
+					type="bar"
+					height={380}
+					width={"100%"}
+				/>
+			</Box>
 		</DashboardCard>
 	);
 };

@@ -91,7 +91,7 @@ const AgeDistribution = ({ data }: AgeDistributionProps) => {
 
 	return (
 		<DashboardCard title="Age Distribution">
-			<Grid container spacing={3}>
+			<Grid container spacing={3} id="age-chart">
 				<Grid size={{ xs: 12 }}>
 					<Chart
 						options={optionscolumnchart}
