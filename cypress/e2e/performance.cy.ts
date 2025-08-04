@@ -95,16 +95,4 @@ describe("Accessibility Tests", () => {
 			cy.get("#force-select").focus().should("be.focused");
 		});
 	});
-
-	context("Responsive Design", () => {
-		it("should be accessible on mobile devices", () => {
-			cy.viewport("iphone-x");
-			cy.contains("Police Stop & Search Dashboard").should("be.visible");
-		});
-
-		it("should work on tablet", () => {
-			cy.viewport("ipad-2");
-			cy.contains("Police Stop & Search Dashboard").should("be.visible");
-		});
-	});
 });

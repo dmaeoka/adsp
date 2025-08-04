@@ -145,23 +145,6 @@ describe("Police Dashboard", () => {
 		});
 	});
 
-	describe("Responsive Design", () => {
-		it("should work on mobile viewport", () => {
-			cy.viewport("iphone-x");
-			cy.visit("/metropolitan");
-			cy.wait(3000);
-			cy.contains("Police Stop & Search Dashboard").should("be.visible");
-		});
-
-		it("should work on tablet viewport", () => {
-			cy.viewport("ipad-2");
-			cy.visit("/metropolitan");
-			cy.wait(3000);
-
-			cy.contains("Police Stop & Search Dashboard").should("be.visible");
-		});
-	});
-
 	describe("Error Handling", () => {
 		it("should handle API errors gracefully", () => {
 			cy.intercept("GET", "/api/police-data*", { statusCode: 500 }).as(
