@@ -7,7 +7,7 @@ describe("Police Data API", () => {
 			cy.request({
 				method: "GET",
 				url: `${API_BASE}?force=metropolitan&date=2024-01`,
-				failOnStatusCode: false
+				failOnStatusCode: false,
 			}).then((response) => {
 				expect(response.status).to.eq(200);
 				expect(response.body).to.have.property("data");
@@ -48,7 +48,7 @@ describe("Police Data API", () => {
 			cy.request({
 				method: "GET",
 				url: `${API_BASE}?date=2024-01`,
-				failOnStatusCode: false
+				failOnStatusCode: false,
 			}).then((response) => {
 				expect(response.status).to.eq(200);
 				expect(response.body).to.have.property("data");
@@ -62,7 +62,7 @@ describe("Police Data API", () => {
 				cy.request({
 					method: "GET",
 					url: `${API_BASE}?force=${force}&date=2024-01`,
-					failOnStatusCode: false
+					failOnStatusCode: false,
 				}).then((response) => {
 					expect(response.status).to.eq(200);
 					expect(response.body).to.have.property("data");
@@ -74,7 +74,7 @@ describe("Police Data API", () => {
 			cy.request({
 				method: "GET",
 				url: `${API_BASE}?force=metropolitan&date=2024-01`,
-				failOnStatusCode: false
+				failOnStatusCode: false,
 			}).then((response) => {
 				expect(response.headers).to.have.property(
 					"access-control-allow-origin",
@@ -116,7 +116,7 @@ describe("Police Data API", () => {
 				method: "POST",
 				url: API_BASE,
 				body: { action: "health-check" },
-				failOnStatusCode: false
+				failOnStatusCode: false,
 			}).then((response) => {
 				expect(response.status).to.eq(200);
 				expect(response.body).to.have.property("status", "healthy");
@@ -131,7 +131,7 @@ describe("Police Data API", () => {
 				method: "POST",
 				url: API_BASE,
 				body: { action: "clear-cache" },
-				failOnStatusCode: false
+				failOnStatusCode: false,
 			}).then((response) => {
 				expect(response.status).to.eq(200);
 				expect(response.body).to.have.property(
@@ -180,7 +180,7 @@ describe("Police Data API", () => {
 			cy.request({
 				method: "OPTIONS",
 				url: API_BASE,
-				failOnStatusCode: false
+				failOnStatusCode: false,
 			}).then((response) => {
 				expect(response.status).to.eq(200);
 				expect(response.headers).to.have.property(
@@ -224,7 +224,7 @@ describe("Police Data API", () => {
 			cy.request({
 				method: "GET",
 				url: `${API_BASE}?force=metropolitan&date=2024-01`,
-				failOnStatusCode: false
+				failOnStatusCode: false,
 			}).then((response) => {
 				expect(response.status).to.eq(200);
 
@@ -259,7 +259,7 @@ describe("Police Data API", () => {
 				cy.request({
 					method: "GET",
 					url: `${API_BASE}?force=metropolitan&date=${date}`,
-					failOnStatusCode: false
+					failOnStatusCode: false,
 				}).then((response) => {
 					expect(response.status).to.eq(200);
 					expect(response.body).to.have.property("month", date);
