@@ -415,7 +415,11 @@ function DashboardContent({ initialParams }: PoliceDataDashboardProps) {
 				</Grid>
 
 				<Grid size={{ xs: 12 }}>
-					<PoliceMap />
+					<PoliceMap
+						data={data}
+						forceName={getCurrentForceName()}
+						month={getFormattedMonth()}
+					/>
 				</Grid>
 
 			</Grid>
