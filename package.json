@@ -8,7 +8,19 @@
 		"start": "next start",
 		"lint": "next lint",
 		"format": "prettier . --write",
-		"format:check": "prettier . --check"
+		"format:check": "prettier . --check",
+		"cypress:open": "cypress open",
+		"cypress:run": "cypress run",
+		"cypress:run:headed": "cypress run --headed",
+		"cypress:run:chrome": "cypress run --browser chrome",
+		"cypress:run:firefox": "cypress run --browser firefox",
+		"cypress:run:edge": "cypress run --browser edge",
+		"cypress:run:component": "cypress run --component",
+		"cypress:run:e2e": "cypress run --e2e",
+		"test:e2e": "start-server-and-test dev http://localhost:3000 cypress:run:e2e",
+		"test:e2e:headed": "start-server-and-test dev http://localhost:3000 cypress:run:headed",
+		"test:component": "cypress run --component",
+		"test:all": "npm run test:component && npm run test:e2e"
 	},
 	"dependencies": {
 		"@emotion/cache": "^11.11.0",
