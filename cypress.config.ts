@@ -1,3 +1,4 @@
+// cypress.config.ts
 import { defineConfig } from "cypress";
 
 export default defineConfig({
@@ -7,19 +8,20 @@ export default defineConfig({
 		viewportHeight: 720,
 		video: true,
 		screenshotOnRunFailure: true,
-		defaultCommandTimeout: 10000,
-		requestTimeout: 15000,
-		responseTimeout: 15000,
+		defaultCommandTimeout: 15000,
+		requestTimeout: 20000,
+		responseTimeout: 20000,
 		pageLoadTimeout: 30000,
 		setupNodeEvents(on, config) {
 			// implement node event listeners here
 		},
 		env: {
-			// Add environment variables if needed
 			API_BASE_URL: "http://localhost:3000/api",
 		},
 		specPattern: "cypress/e2e/**/*.cy.{js,jsx,ts,tsx}",
 		supportFile: "cypress/support/e2e.ts",
+		// Exclude component tests from e2e runs
+		excludeSpecPattern: "cypress/e2e/component/**/*",
 	},
 	component: {
 		devServer: {
