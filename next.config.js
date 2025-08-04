@@ -6,7 +6,7 @@ const nextConfig = {
 		remotePatterns: [
 			{
 				protocol: 'https',
-				hostname: 'tiles.stadiamaps.com',
+				hostname: 'tile.openstreetmap.org',
 				port: '',
 				pathname: '**',
 			},

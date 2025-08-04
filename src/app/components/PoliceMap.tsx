@@ -356,7 +356,7 @@ export default function PoliceMap({
 						>
 							<TileLayer
 								attribution='&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors'
-								url="https://tiles.stadiamaps.com/tiles/alidade_smooth/{z}/{x}/{y}{r}.png"
+								url="https://tile.openstreetmap.org/{z}/{x}/{y}.png"
 							/>
 
 							<MapBounds bounds={mapBounds} />
