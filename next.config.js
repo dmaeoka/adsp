@@ -1,7 +1,17 @@
 /** @type {import('next').NextConfig} */
 const nextConfig = {
 	reactStrictMode: true,
-	images: { unoptimized: true },
+	images: {
+		unoptimized: true,
+		remotePatterns: [
+			{
+				protocol: 'https',
+				hostname: 'tiles.stadiamaps.com',
+				port: '',
+				pathname: '**',
+			},
+		],
+	},
 	typescript: {
 		// Ignore TypeScript errors during build (not recommended for production)
 		ignoreBuildErrors: true,
