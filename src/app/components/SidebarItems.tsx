@@ -151,7 +151,10 @@ function SidebarContent() {
 					{isLoadingForces ? (
 						<MUI_MenuItem disabled>
 							<Box display="flex" alignItems="center" gap={1}>
-								<CircularProgress size={16} />
+								<CircularProgress
+									size={16}
+									data-testid="loading"
+								/>
 								Loading forces...
 							</Box>
 						</MUI_MenuItem>
@@ -205,7 +208,7 @@ function SidebarFallback() {
 				>
 					<MUI_MenuItem disabled>
 						<Box display="flex" alignItems="center" gap={1}>
-							<CircularProgress size={16} />
+							<CircularProgress size={16} data-testid="loading" />
 							Loading...
 						</Box>
 					</MUI_MenuItem>

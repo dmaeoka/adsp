@@ -324,7 +324,11 @@ function DashboardContent({ initialParams }: PoliceDataDashboardProps) {
 				minHeight="400px"
 			>
 				<Box textAlign="center">
-					<CircularProgress size={48} sx={{ mb: 2 }} />
+					<CircularProgress
+						size={48}
+						sx={{ mb: 2 }}
+						data-testid="loading"
+					/>
 					<Typography variant="h6" color="text.secondary">
 						{isLoadingForces
 							? "Loading police forces..."
@@ -421,7 +425,6 @@ function DashboardContent({ initialParams }: PoliceDataDashboardProps) {
 						month={getFormattedMonth()}
 					/>
 				</Grid>
-
 			</Grid>
 		</Box>
 	);
@@ -437,7 +440,11 @@ function DashboardFallback() {
 			minHeight="400px"
 		>
 			<Box textAlign="center">
-				<CircularProgress size={48} sx={{ mb: 2 }} />
+				<CircularProgress
+					size={48}
+					sx={{ mb: 2 }}
+					data-testid="loading"
+				/>
 				<Typography variant="h6" color="text.secondary">
 					Loading dashboard...
 				</Typography>
