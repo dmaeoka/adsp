@@ -5,10 +5,10 @@ const nextConfig = {
 		unoptimized: true,
 		remotePatterns: [
 			{
-				protocol: 'https',
-				hostname: 'tile.openstreetmap.org',
-				port: '',
-				pathname: '**',
+				protocol: "https",
+				hostname: "tile.openstreetmap.org",
+				port: "",
+				pathname: "**",
 			},
 		],
 	},
@@ -28,16 +28,13 @@ const nextConfig = {
 	},
 
 	// Exclude directories from compilation
-	experimental: {
-		// Exclude specific directories
-		outputFileTracingExcludes: {
-			"*": [
-				"cypress/**/*",
-				"**/*.cy.{js,jsx,ts,tsx}",
-				"**/*.spec.{js,jsx,ts,tsx}",
-				"**/*.test.{js,jsx,ts,tsx}",
-			],
-		},
+	outputFileTracingExcludes: {
+		"*": [
+			"cypress/**/*",
+			"**/*.cy.{js,jsx,ts,tsx}",
+			"**/*.spec.{js,jsx,ts,tsx}",
+			"**/*.test.{js,jsx,ts,tsx}",
+		],
 	},
 };
 

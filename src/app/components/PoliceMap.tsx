@@ -9,15 +9,15 @@ import {
 	useMap,
 	CircleMarker,
 } from "react-leaflet";
+import MarkerClusterGroup from 'react-leaflet-markercluster';
+import 'leaflet.markercluster/dist/MarkerCluster.css';
+import 'leaflet.markercluster/dist/MarkerCluster.Default.css';
 import { LatLngTuple, DivIcon, LatLngBounds, LatLng } from "leaflet";
 import {
 	Typography,
 	Chip,
 	Box,
 	Stack,
-	Slider,
-	FormControlLabel,
-	Switch,
 } from "@mui/material";
 import DashboardCard from "./DashboardCard";
 import "leaflet/dist/leaflet.css";
@@ -77,115 +77,6 @@ interface ClusterPoint {
 	self_defined_ethnicity?: string | null;
 }
 
-// Custom clustering algorithm
-const clusterMarkers = (
-	markers: ProcessedMarker[],
-	clusterRadius: number,
-	searchTypeColors: Record<string, string>,
-): (ProcessedMarker | ClusterPoint)[] => {
-	if (markers.length === 0) return [];
-
-	const processed = new Set<number>();
-	const result: (ProcessedMarker | ClusterPoint)[] = [];
-
-	markers.forEach((marker, index) => {
-		if (processed.has(index)) return;
-
-		const nearbyMarkers = [marker];
-		const markerLatLng = new LatLng(marker.lat, marker.lng);
-
-		// Find nearby markers within cluster radius
-		markers.forEach((otherMarker, otherIndex) => {
-			if (index === otherIndex || processed.has(otherIndex)) return;
-
-			const otherLatLng = new LatLng(otherMarker.lat, otherMarker.lng);
-			const distance = markerLatLng.distanceTo(otherLatLng);
-
-			if (distance <= clusterRadius) {
-				nearbyMarkers.push(otherMarker);
-				processed.add(otherIndex);
-			}
-		});
-
-		processed.add(index);
-
-		// If we have multiple markers, create a cluster
-		if (nearbyMarkers.length > 1) {
-			// Calculate cluster center
-			const avgLat =
-				nearbyMarkers.reduce((sum, m) => sum + m.lat, 0) /
-				nearbyMarkers.length;
-			const avgLng =
-				nearbyMarkers.reduce((sum, m) => sum + m.lng, 0) /
-				nearbyMarkers.length;
-
-			// Determine dominant search type for cluster color
-			const typeCounts = nearbyMarkers.reduce(
-				(acc, m) => {
-					acc[m.type] = (acc[m.type] || 0) + 1;
-					return acc;
-				},
-				{} as Record<string, number>,
-			);
-
-			const dominantType = Object.entries(typeCounts).sort(
-				([, a], [, b]) => b - a,
-			)[0][0];
-
-			const cluster: ClusterPoint = {
-				id: `cluster-${avgLat}-${avgLng}`,
-				lat: avgLat,
-				lng: avgLng,
-				markers: nearbyMarkers,
-				searchType: dominantType,
-				color: searchTypeColors[dominantType] || "#3388ff",
-				count: nearbyMarkers.length,
-				// Required fields for interface compatibility
-				datetime: nearbyMarkers[0].datetime,
-				type: `Cluster (${nearbyMarkers.length})`,
-				location: {
-					latitude: avgLat.toString(),
-					longitude: avgLng.toString(),
-					street: { name: `${nearbyMarkers.length} locations` },
-				},
-			};
-
-			result.push(cluster);
-		} else {
-			result.push(marker);
-		}
-	});
-
-	return result;
-};
-
-// Custom cluster icon creation
-const createClusterIcon = (cluster: ClusterPoint) => {
-	return new DivIcon({
-		html: `
-			<div style="
-				background-color: ${cluster.color};
-				color: white;
-				border-radius: 50%;
-				width: 40px;
-				height: 40px;
-				display: flex;
-				align-items: center;
-				justify-content: center;
-				border: 3px solid white;
-				box-shadow: 0 2px 5px rgba(0,0,0,0.3);
-				font-weight: bold;
-				font-size: 14px;
-			">
-				${cluster.count}
-			</div>
-		`,
-		className: "custom-cluster-icon",
-		iconSize: [40, 40],
-		iconAnchor: [20, 20],
-	});
-};
-
 // Component to fit map bounds to markers
 const MapBounds: React.FC<{ bounds: LatLngBounds | null }> = ({ bounds }) => {
 	const map = useMap();
@@ -218,8 +109,6 @@ export default function PoliceMap({
 	month,
 }: PoliceMapProps) {
 	const mapRef = useRef<any>(null);
-	const [clusterRadius, setClusterRadius] = useState(100); // meters
-	const [showClusters, setShowClusters] = useState(true);
 
 	// Color mapping for different search types
 	const searchTypeColors = useMemo(() => {
@@ -268,21 +157,11 @@ export default function PoliceMap({
 			}));
 	}, [data]);
 
-	// Apply clustering
-	const displayMarkers = useMemo(() => {
-		if (!showClusters || validMarkers.length === 0) {
-			return validMarkers;
-		}
-		return clusterMarkers(validMarkers, clusterRadius, searchTypeColors);
-	}, [validMarkers, clusterRadius, showClusters, searchTypeColors]);
-
 	// Calculate map bounds
 	const mapBounds = useMemo(() => {
 		if (validMarkers.length === 0) return null;
-
 		const lats = validMarkers.map((marker) => marker.lat);
 		const lngs = validMarkers.map((marker) => marker.lng);
-
 		const bounds = new LatLngBounds(
 			[Math.min(...lats), Math.min(...lngs)],
 			[Math.max(...lats), Math.max(...lngs)],
@@ -312,13 +191,6 @@ export default function PoliceMap({
 			.sort(([, a], [, b]) => b - a)
 			.slice(0, 5); // Show top 5 types
 	}, [validMarkers]);
-
-	// Helper function to check if item is a cluster
-	const isCluster = (
-		item: ProcessedMarker | ClusterPoint,
-	): item is ClusterPoint => {
-		return "markers" in item;
-	};
 
 	const cardTitle =
 		forceName && month
@@ -361,122 +233,14 @@ export default function PoliceMap({
 
 							<MapBounds bounds={mapBounds} />
 
-							{displayMarkers.map((item, index) => {
-								if (isCluster(item)) {
-									// Render cluster
-									const position: LatLngTuple = [
-										item.lat,
-										item.lng,
-									];
-									return (
-										<Marker
-											key={`cluster-${index}`}
-											position={position}
-											icon={createClusterIcon(item)}
-										>
-											<Popup maxWidth={350}>
-												<Stack spacing={1}>
-													<Typography
-														variant="subtitle1"
-														fontWeight={600}
-													>
-														Cluster of {item.count}{" "}
-														Records
-													</Typography>
-
-													<Typography variant="body2">
-														<strong>
-															Dominant Type:
-														</strong>{" "}
-														{item.searchType}
-													</Typography>
-
-													{/* Show breakdown of types in cluster */}
-													<Box>
-														<Typography
-															variant="body2"
-															fontWeight={600}
-														>
-															Search Types:
-														</Typography>
-														{Object.entries(
-															item.markers.reduce(
-																(acc, m) => {
-																	acc[
-																		m.type
-																	] =
-																		(acc[
-																			m
-																				.type
-																		] ||
-																			0) +
-																		1;
-																	return acc;
-																},
-																{} as Record<
-																	string,
-																	number
-																>,
-															),
-														).map(
-															([type, count]) => (
-																<Typography
-																	key={type}
-																	variant="caption"
-																	display="block"
-																>
-																	• {type}:{" "}
-																	{count}
-																</Typography>
-															),
-														)}
-													</Box>
-
-													{/* Show date range */}
-													<Typography variant="body2">
-														<strong>
-															Date Range:
-														</strong>{" "}
-														{new Date(
-															Math.min(
-																...item.markers.map(
-																	(m) =>
-																		new Date(
-																			m.datetime,
-																		).getTime(),
-																),
-															),
-														).toLocaleDateString(
-															"en-GB",
-														)}
-														{" - "}
-														{new Date(
-															Math.max(
-																...item.markers.map(
-																	(m) =>
-																		new Date(
-																			m.datetime,
-																		).getTime(),
-																),
-															),
-														).toLocaleDateString(
-															"en-GB",
-														)}
-													</Typography>
-												</Stack>
-											</Popup>
-										</Marker>
-									);
-								} else {
+							<MarkerClusterGroup>
+								{validMarkers.map((item, index) => {
 									// Render individual marker
 									const position: LatLngTuple = [
 										item.lat,
 										item.lng,
 									];
-									const searchTypeColor =
-										searchTypeColors[item.type] ||
-										"#3388ff";
-
+									const searchTypeColor = searchTypeColors[item.type] || "#3388ff";
 									return (
 										<CircleMarker
 											key={item.id || `marker-${index}`}
@@ -595,8 +359,9 @@ export default function PoliceMap({
 											</Popup>
 										</CircleMarker>
 									);
-								}
-							})}
+								})}
+							</MarkerClusterGroup>
+
 						</MapContainer>
 						{stats.length > 0 && (
 							<Box
@@ -662,31 +427,6 @@ export default function PoliceMap({
 								</Stack>
 							</Box>
 						)}
-						<Box
-							sx={{
-								position: "absolute",
-								bottom: 10,
-								left: 10,
-								backgroundColor: "rgba(255, 255, 255, 0.9)",
-								p: 1,
-								borderRadius: 1,
-								zIndex: 1000,
-							}}
-						>
-							<Typography
-								variant="caption"
-								color="text.secondary"
-							>
-								Showing{" "}
-								{showClusters
-									? displayMarkers.length
-									: validMarkers.length}{" "}
-								{showClusters &&
-								displayMarkers.length !== validMarkers.length
-									? "records"
-									: "locations"}
-							</Typography>
-						</Box>
 					</>
 				)}
 			</Box>
